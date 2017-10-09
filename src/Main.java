@@ -10,18 +10,25 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
-	private static List<String> songs = new ArrayList<>();
+	private static List<String> songNames = new ArrayList<>();
 	private static Map<String, Genre> labels = new HashMap<>();
-	private static Map<String, double[]> features = new HashMap<>();
+	private static Map<String, List<double[]>> songs = new HashMap<>();
 
 	public static void main(String[] args) throws FileNotFoundException {
 		getTrainingSet();
 		getTrainingLabels();
 
-		SongClassifier agent = new GaussianClassifier();
-		System.out.println("Gaussian: " + crossValidate(agent));
+		int testSets = 5;
 
-		// SongClassifier agent = new GaussianClassifier();
+		SongClassifier agent = new GaussianClassifier();
+		System.out.println("Gaussian: " + crossValidate(agent, testSets));
+
+		agent = new TotalGaussianClassifier();
+		System.out.println("Total Gaussian: " + crossValidate(agent, testSets));
+
+		agent = new KNNClassifier(5);
+		System.out.println(5 + "NN: " + crossValidate(agent, testSets));
+
 		// train(agent);
 		// classifyTestSet(agent);
 	}
@@ -31,7 +38,7 @@ public class Main {
 		File[] files = dir.listFiles();
 		for (int i = 0; i < files.length; ++i) {
 			String filename = files[i].getName();
-			Stats stats = new Stats();
+			List<double[]> song = new ArrayList<>();
 			Scanner in = new Scanner(new FileInputStream(files[i]));
 			while (in.hasNextLine()) {
 				String line = in.nextLine();
@@ -40,10 +47,10 @@ public class Main {
 				for (int j = 0; j < Song.DATA_SIZE; ++j) {
 					feature[j] = Double.parseDouble(data[j]);
 				}
-				stats.add(feature);
+				song.add(feature);
 			}
-			songs.add(filename);
-			features.put(filename, stats.average());
+			songNames.add(filename);
+			songs.put(filename, song);
 			in.close();
 		}
 	}
@@ -59,37 +66,37 @@ public class Main {
 		in.close();
 	}
 
-	private static double crossValidate(SongClassifier agent) {
-		int n = songs.size();
+	private static double crossValidate(SongClassifier agent, int testSets) {
+		int n = songNames.size();
+		int testSetSize = n / testSets;
 		double total = 0;
-		for (int i = 0; i < 10; ++i) {
+		for (int i = 0; i < testSets; ++i) {
 			agent.clear();
-			int k = n / 10;
 			for (int j = 0; j < n; ++j) {
-				if (j >= i * k && j < (i + 1) * k)
+				if (j >= i * testSetSize && j < (i + 1) * testSetSize)
 					continue;
-				String name = songs.get(j);
-				agent.add(features.get(name), labels.get(name));
+				String name = songNames.get(j);
+				agent.add(songs.get(name), labels.get(name));
 			}
 			agent.train();
 			int correct = 0;
-			for (int j = i * k; j < (i + 1) * k; ++j) {
-				String name = songs.get(j);
-				Genre genre = agent.classify(features.get(name));
+			for (int j = i * testSetSize; j < (i + 1) * testSetSize; ++j) {
+				String name = songNames.get(j);
+				Genre genre = agent.classify(songs.get(name));
 				if (genre.equals(labels.get(name)))
 					++correct;
 			}
-			total += (double) (correct) / k;
+			total += (double) (correct) / testSetSize;
 		}
-		return total / 10;
+		return total / testSets;
 	}
 
 	private static void train(SongClassifier agent) {
 		agent.clear();
-		int n = songs.size();
+		int n = songNames.size();
 		for (int i = 0; i < n; ++i) {
-			String name = songs.get(i);
-			agent.add(features.get(name), labels.get(name));
+			String name = songNames.get(i);
+			agent.add(songs.get(name), labels.get(name));
 		}
 		agent.train();
 	}
@@ -101,7 +108,7 @@ public class Main {
 		File[] files = dir.listFiles();
 		for (int i = 0; i < files.length; ++i) {
 			String filename = files[i].getName();
-			Stats stats = new Stats();
+			List<double[]> song = new ArrayList<>();
 			Scanner in = new Scanner(new FileInputStream(files[i]));
 			while (in.hasNextLine()) {
 				String line = in.nextLine();
@@ -110,9 +117,9 @@ public class Main {
 				for (int j = 0; j < Song.DATA_SIZE; ++j) {
 					feature[j] = Double.parseDouble(data[j]);
 				}
-				stats.add(feature);
+				song.add(feature);
 			}
-			Genre genre = agent.classify(stats.average());
+			Genre genre = agent.classify(song);
 			out.println(filename + "," + genre.toString());
 			in.close();
 		}
