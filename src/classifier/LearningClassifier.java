@@ -23,6 +23,11 @@ public class LearningClassifier implements SongClassifier {
 	}
 
 	public void learn(double success) {
+		System.out.println("current weights: ");
+		for (int i = 0; i < Song.FEATURES; ++i) {
+			System.out.print(weights[i] + " ");
+		}
+		System.out.println();
 		if (success > this.success) {
 			System.out.println("learned from " + this.success + " to " + success);
 			this.success = success;
@@ -30,18 +35,13 @@ public class LearningClassifier implements SongClassifier {
 			System.out.println("failed to learn");
 			weights = prevWeights;
 		}
-		System.out.println("current weights: ");
-		for (int i = 0; i < Song.FEATURES; ++i) {
-			System.out.print(weights[i] + " ");
-		}
-		System.out.println();
 		prevWeights = Arrays.copyOf(weights, Song.FEATURES);
 		modify();
 	}
 
 	private void modify() {
 		int index = rng.nextInt(Song.FEATURES);
-		double factor = 0.5 + rng.nextDouble();
+		double factor = Math.pow(2, rng.nextDouble() - 0.5);
 		weights[index] *= factor;
 	}
 
