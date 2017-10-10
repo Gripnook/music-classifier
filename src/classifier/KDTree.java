@@ -1,76 +1,64 @@
 package classifier;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 public class KDTree {
-	private static class Node {
-		public Entry entry;
-		public Node left, right;
-	}
-
 	private int dataSize;
-	private Node root;
+	private Entry[] entries;
 
 	public KDTree(List<Entry> entries, int dataSize) {
 		this.dataSize = dataSize;
-		root = create(entries, 0);
+		this.entries = entries.toArray(new Entry[entries.size()]);
+		create(0, this.entries.length, 0);
 	}
 
-	private Node create(List<Entry> entries, int depth) {
-		if (entries.isEmpty()) {
-			return null;
+	private void create(int begin, int end, int depth) {
+		if (begin == end) {
+			return;
 		}
 
 		int axis = depth % dataSize;
 
 		// Find median on axis.
-		Collections.sort(entries, (lhs, rhs) -> Double.compare(lhs.feature[axis], rhs.feature[axis]));
-		int medianIndex = entries.size() / 2;
-		Entry median = entries.get(medianIndex);
+		Arrays.sort(entries, begin, end, (lhs, rhs) -> Double.compare(lhs.feature[axis], rhs.feature[axis]));
+		int medianIndex = (begin + end) / 2;
 
-		Node node = new Node();
-		node.entry = median;
-		node.left = create(entries.subList(0, medianIndex), depth + 1);
-		node.right = create(entries.subList(medianIndex + 1, entries.size()), depth + 1);
-		return node;
+		create(begin, medianIndex, depth + 1);
+		create(medianIndex + 1, end, depth + 1);
 	}
 
 	private Entry[] currentNearest;
 
 	public Entry[] nearest(int k, double[] feature) {
 		currentNearest = new Entry[k];
-		nearest(root, feature, 0);
+		nearest(0, entries.length, feature, 0);
 		return currentNearest;
 	}
 
-	private void nearest(Node node, double[] feature, int depth) {
+	private void nearest(int start, int end, double[] feature, int depth) {
+		if (start == end)
+			return;
+
 		int axis = depth % dataSize;
 
-		check(node, feature);
-		if (feature[axis] < node.entry.feature[axis]) {
-			if (node.left != null) {
-				nearest(node.left, feature, depth + 1);
-			}
-			if (node.right == null)
-				return;
-			if (crosses(node, feature, axis)) {
-				nearest(node.right, feature, depth + 1);
+		int medianIndex = (start + end) / 2;
+		Entry entry = entries[medianIndex];
+		check(entry, feature);
+		if (feature[axis] < entry.feature[axis]) {
+			nearest(start, medianIndex, feature, depth + 1);
+			if (crosses(entry, feature, axis)) {
+				nearest(medianIndex + 1, end, feature, depth + 1);
 			}
 		} else {
-			if (node.right != null) {
-				nearest(node.right, feature, depth + 1);
-			}
-			if (node.left == null)
-				return;
-			if (crosses(node, feature, axis)) {
-				nearest(node.left, feature, depth + 1);
+			nearest(medianIndex + 1, end, feature, depth + 1);
+			if (crosses(entry, feature, axis)) {
+				nearest(start, medianIndex, feature, depth + 1);
 			}
 		}
 	}
 
-	private void check(Node node, double[] feature) {
-		Entry candidate = node.entry;
+	private void check(Entry candidate, double[] feature) {
 		for (int i = 0; i < currentNearest.length; ++i) {
 			Entry entry = currentNearest[i];
 			if (entry == null || distance(candidate.feature, feature) < distance(entry.feature, feature)) {
@@ -80,9 +68,9 @@ public class KDTree {
 		}
 	}
 
-	private boolean crosses(Node node, double[] feature, int axis) {
+	private boolean crosses(Entry median, double[] feature, int axis) {
 		for (Entry entry : currentNearest) {
-			if (entry == null || Math.abs(feature[axis] - node.entry.feature[axis]) < distance(feature, entry.feature))
+			if (entry == null || Math.abs(feature[axis] - median.feature[axis]) < distance(feature, entry.feature))
 				return true;
 		}
 		return false;
