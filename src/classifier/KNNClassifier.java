@@ -25,7 +25,7 @@ public class KNNClassifier implements SongClassifier {
 
 	@Override
 	public void train() {
-		tree = new BestBinFirstKDTree(songs, Song.FEATURES, 3);
+		tree = new BestBinFirstKDTree(songs, Song.FEATURES, 5);
 	}
 
 	@Override
