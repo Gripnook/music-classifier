@@ -1,22 +1,31 @@
+package classifier;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TotalGaussianClassifier implements SongClassifier {
+import main.Genre;
+import main.Song;
+import numeric.Matrix;
+import numeric.Stats;
+
+public class GaussianClassifier implements SongClassifier {
 	private Map<Genre, Stats> stats = new HashMap<>();
 	private Map<Genre, double[]> averages = new HashMap<>();
 	private Map<Genre, double[][]> inverseCovs = new HashMap<>();
 
-	public TotalGaussianClassifier() {
+	public GaussianClassifier() {
 		for (Genre genre : Genre.class.getEnumConstants()) {
-			stats.put(genre, new Stats());
+			stats.put(genre, new Stats(Song.FEATURES));
 		}
 	}
 
 	@Override
 	public void add(List<double[]> song, Genre genre) {
+		Stats songStats = new Stats(Song.FEATURES);
 		for (double[] feature : song)
-			stats.get(genre).add(feature);
+			songStats.add(feature);
+		stats.get(genre).add(songStats.average());
 	}
 
 	@Override
@@ -29,17 +38,20 @@ public class TotalGaussianClassifier implements SongClassifier {
 
 	@Override
 	public Genre classify(List<double[]> song) {
+		Stats songStats = new Stats(Song.FEATURES);
+		for (double[] feature : song)
+			songStats.add(feature);
+		double[] feature = songStats.average();
+
 		Genre result = null;
 		double unll = Double.MAX_VALUE;
 		for (Genre genre : Genre.class.getEnumConstants()) {
 			double[] average = averages.get(genre);
 			double[][] inverseCov = inverseCovs.get(genre);
 			double unllCandidate = 0;
-			for (double[] feature : song) {
-				for (int i = 0; i < Song.DATA_SIZE; ++i) {
-					for (int j = 0; j < Song.DATA_SIZE; ++j) {
-						unllCandidate += (feature[i] - average[i]) * (feature[j] - average[j]) * inverseCov[i][j];
-					}
+			for (int i = 0; i < Song.FEATURES; ++i) {
+				for (int j = 0; j < Song.FEATURES; ++j) {
+					unllCandidate += (feature[i] - average[i]) * (feature[j] - average[j]) * inverseCov[i][j];
 				}
 			}
 			if (unllCandidate < unll) {
@@ -56,7 +68,7 @@ public class TotalGaussianClassifier implements SongClassifier {
 		averages = new HashMap<>();
 		inverseCovs = new HashMap<>();
 		for (Genre genre : Genre.class.getEnumConstants()) {
-			stats.put(genre, new Stats());
+			stats.put(genre, new Stats(Song.FEATURES));
 		}
 	}
 }

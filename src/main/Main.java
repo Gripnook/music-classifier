@@ -1,3 +1,5 @@
+package main;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,6 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
+import classifier.GaussianClassifier;
+import classifier.PCAKNNClassifier;
+import classifier.SongClassifier;
+import classifier.TotalGaussianClassifier;
 
 public class Main {
 	private static List<String> songNames = new ArrayList<>();
@@ -26,8 +33,12 @@ public class Main {
 		agent = new TotalGaussianClassifier();
 		System.out.println("Total Gaussian: " + crossValidate(agent, testSets));
 
-		agent = new KNNClassifier(5);
-		System.out.println(5 + "NN: " + crossValidate(agent, testSets));
+		for (int dataSize = 1; dataSize <= 12; ++dataSize) {
+			for (int k = 1; k <= 25; k += 2) {
+				agent = new PCAKNNClassifier(k, dataSize);
+				System.out.println(k + "NN " + dataSize + "D: " + crossValidate(agent, testSets));
+			}
+		}
 
 		// train(agent);
 		// classifyTestSet(agent);
@@ -43,8 +54,8 @@ public class Main {
 			while (in.hasNextLine()) {
 				String line = in.nextLine();
 				String[] data = line.split(",");
-				double[] feature = new double[Song.DATA_SIZE];
-				for (int j = 0; j < Song.DATA_SIZE; ++j) {
+				double[] feature = new double[Song.FEATURES];
+				for (int j = 0; j < Song.FEATURES; ++j) {
 					feature[j] = Double.parseDouble(data[j]);
 				}
 				song.add(feature);
@@ -113,8 +124,8 @@ public class Main {
 			while (in.hasNextLine()) {
 				String line = in.nextLine();
 				String[] data = line.split(",");
-				double[] feature = new double[Song.DATA_SIZE];
-				for (int j = 0; j < Song.DATA_SIZE; ++j) {
+				double[] feature = new double[Song.FEATURES];
+				for (int j = 0; j < Song.FEATURES; ++j) {
 					feature[j] = Double.parseDouble(data[j]);
 				}
 				song.add(feature);
