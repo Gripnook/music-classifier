@@ -177,9 +177,7 @@ class KDTree {
 
 	private boolean crosses(Node node, double[] feature, int axis) {
 		for (Entry entry : currentNearest) {
-			if (entry == null)
-				continue;
-			if (Math.abs(feature[axis] - node.entry.song[axis]) < distance(feature, entry.song))
+			if (entry == null || Math.abs(feature[axis] - node.entry.song[axis]) < distance(feature, entry.song))
 				return true;
 		}
 		return false;
