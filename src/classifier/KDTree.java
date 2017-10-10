@@ -36,24 +36,24 @@ public class KDTree {
 		return currentNearest;
 	}
 
-	private void nearest(int start, int end, double[] feature, int depth) {
-		if (start == end)
+	private void nearest(int begin, int end, double[] feature, int depth) {
+		if (begin == end)
 			return;
 
 		int axis = depth % dataSize;
 
-		int medianIndex = (start + end) / 2;
+		int medianIndex = (begin + end) / 2;
 		Entry entry = entries[medianIndex];
 		check(entry, feature);
 		if (feature[axis] < entry.feature[axis]) {
-			nearest(start, medianIndex, feature, depth + 1);
+			nearest(begin, medianIndex, feature, depth + 1);
 			if (crosses(entry, feature, axis)) {
 				nearest(medianIndex + 1, end, feature, depth + 1);
 			}
 		} else {
 			nearest(medianIndex + 1, end, feature, depth + 1);
 			if (crosses(entry, feature, axis)) {
-				nearest(start, medianIndex, feature, depth + 1);
+				nearest(begin, medianIndex, feature, depth + 1);
 			}
 		}
 	}
