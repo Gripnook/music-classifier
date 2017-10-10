@@ -11,7 +11,7 @@ import main.Song;
 public class KNNClassifier implements SongClassifier {
 	private int k;
 	private List<Entry> songs = new ArrayList<>();
-	private KDTree tree = null;
+	private BestBinFirstKDTree tree = null;
 
 	public KNNClassifier(int k) {
 		this.k = k;
@@ -25,7 +25,7 @@ public class KNNClassifier implements SongClassifier {
 
 	@Override
 	public void train() {
-		tree = new KDTree(songs, Song.FEATURES);
+		tree = new BestBinFirstKDTree(songs, Song.FEATURES, 3);
 	}
 
 	@Override

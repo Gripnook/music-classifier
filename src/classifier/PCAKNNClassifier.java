@@ -15,7 +15,7 @@ public class PCAKNNClassifier implements SongClassifier {
 	private Stats stats = new Stats(Song.FEATURES);
 	private List<Entry> entries = new ArrayList<>();
 	private PCA pca = null;
-	private KDTree tree = null;
+	private BestBinFirstKDTree tree = null;
 
 	public PCAKNNClassifier(int k, int dataSize) {
 		this.k = k;
@@ -36,7 +36,7 @@ public class PCAKNNClassifier implements SongClassifier {
 		for (Entry entry : entries) {
 			entry.feature = pca.transform(entry.feature);
 		}
-		tree = new KDTree(entries, dataSize);
+		tree = new BestBinFirstKDTree(entries, dataSize, 3);
 	}
 
 	@Override
