@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import classifier.GaussianClassifier;
+import classifier.LearningClassifier;
 import classifier.PCAKNNClassifier;
 import classifier.SongClassifier;
 import classifier.TotalGaussianClassifier;
@@ -27,18 +28,25 @@ public class Main {
 
 		int testSets = 5;
 
-		SongClassifier agent = new GaussianClassifier();
-		System.out.println("Gaussian: " + crossValidate(agent, testSets));
-
-		agent = new TotalGaussianClassifier();
-		System.out.println("Total Gaussian: " + crossValidate(agent, testSets));
-
-		for (int dataSize = 1; dataSize <= 12; ++dataSize) {
-			for (int k = 1; k <= 25; k += 2) {
-				agent = new PCAKNNClassifier(k, dataSize);
-				System.out.println(k + "NN " + dataSize + "D: " + crossValidate(agent, testSets));
-			}
+		LearningClassifier agent = new LearningClassifier();
+		while (true) {
+			agent.learn(crossValidate(agent, testSets));
 		}
+
+		// SongClassifier agent = new GaussianClassifier();
+		// System.out.println("Gaussian: " + crossValidate(agent, testSets));
+		//
+		// agent = new TotalGaussianClassifier();
+		// System.out.println("Total Gaussian: " + crossValidate(agent,
+		// testSets));
+		//
+		// for (int dataSize = 1; dataSize <= 12; ++dataSize) {
+		// for (int k = 1; k <= 25; k += 2) {
+		// agent = new PCAKNNClassifier(k, dataSize);
+		// System.out.println(k + "NN " + dataSize + "D: " +
+		// crossValidate(agent, testSets));
+		// }
+		// }
 
 		// train(agent);
 		// classifyTestSet(agent);
