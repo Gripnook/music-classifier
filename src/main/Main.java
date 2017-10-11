@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,19 +29,20 @@ public class Main {
 		getTrainingLabels();
 
 		SongClassifier agent;
+		int testSets = 10;
 
 		agent = new GaussianClassifier();
-		System.out.println("gaussian: " + leaveOneOutCrossValidate(agent));
+		System.out.println("gaussian: " + crossValidate(agent, testSets));
 		agent = new TotalGaussianClassifier();
-		System.out.println("total gaussian: " + leaveOneOutCrossValidate(agent));
+		System.out.println("total gaussian: " + crossValidate(agent, testSets));
 		agent = new KNNClassifier(1);
-		System.out.println("1NN: " + leaveOneOutCrossValidate(agent));
-		agent = new KNNClassifier(10);
-		System.out.println("10NN: " + leaveOneOutCrossValidate(agent));
-		agent = new WeighedKNNClassifier(50);
-		System.out.println("weighed 50NN: " + leaveOneOutCrossValidate(agent));
-		agent = new DecisionForestClassifier(10);
-		System.out.println("decision forest (10): " + leaveOneOutCrossValidate(agent));
+		System.out.println("1NN: " + crossValidate(agent, testSets));
+		agent = new KNNClassifier(5);
+		System.out.println("5NN: " + crossValidate(agent, testSets));
+		agent = new WeighedKNNClassifier(25);
+		System.out.println("weighed 25NN: " + crossValidate(agent, testSets));
+		agent = new DecisionForestClassifier(3);
+		System.out.println("decision forest (3): " + crossValidate(agent, testSets));
 
 		// train(agent);
 		// classifyTestSet(agent);
@@ -83,6 +85,7 @@ public class Main {
 		int n = songNames.size();
 		int testSetSize = n / testSets;
 		double total = 0;
+		Collections.shuffle(songNames);
 		for (int i = 0; i < testSets; ++i) {
 			System.out.print((i + 1) + " / " + testSets + "; ");
 			agent.clear();
