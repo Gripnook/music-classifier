@@ -70,7 +70,9 @@ public class BestBinFirstKDTree {
 	}
 
 	private void nearest(int begin, int end, double[] feature, int depth) {
-		if (begin + 1 == end) {
+		if (begin == end) {
+			return;
+		} else if (begin + 1 == end) {
 			check(entries[begin], feature);
 			return;
 		}
