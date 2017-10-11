@@ -12,22 +12,28 @@ import java.util.Map;
 import java.util.Scanner;
 
 import classifier.GaussianClassifier;
+import classifier.KNNClassifier;
 import classifier.LearningClassifier;
 import classifier.PCAKNNClassifier;
 import classifier.SongClassifier;
 import classifier.TotalGaussianClassifier;
+import numeric.PCA;
+import numeric.Stats;
 
 public class Main {
 	private static List<String> songNames = new ArrayList<>();
 	private static Map<String, Genre> labels = new HashMap<>();
 	private static Map<String, List<double[]>> songs = new HashMap<>();
+	private static PCA pca = null;
 
 	public static void main(String[] args) throws FileNotFoundException {
 		getTrainingSet();
 		getTrainingLabels();
+		performPCA();
 
 		int testSets = 5;
 
+		System.out.println("Learning...");
 		LearningClassifier agent = new LearningClassifier();
 		while (true) {
 			agent.learn(crossValidate(agent, testSets));
@@ -40,12 +46,9 @@ public class Main {
 		// System.out.println("Total Gaussian: " + crossValidate(agent,
 		// testSets));
 		//
-		// for (int dataSize = 1; dataSize <= 12; ++dataSize) {
 		// for (int k = 1; k <= 25; k += 2) {
-		// agent = new PCAKNNClassifier(k, dataSize);
-		// System.out.println(k + "NN " + dataSize + "D: " +
-		// crossValidate(agent, testSets));
-		// }
+		// agent = new KNNClassifier(k);
+		// System.out.println(k + "NN: " + crossValidate(agent, testSets));
 		// }
 
 		// train(agent);
@@ -85,6 +88,21 @@ public class Main {
 		in.close();
 	}
 
+	private static void performPCA() {
+		Stats stats = new Stats(Song.FEATURES);
+		for (String songName : songNames) {
+			for (double[] feature : songs.get(songName)) {
+				stats.add(feature);
+			}
+		}
+		pca = new PCA(stats.covariance(), Song.FEATURES);
+		for (String songName : songNames) {
+			for (double[] feature : songs.get(songName)) {
+				feature = pca.transform(feature);
+			}
+		}
+	}
+
 	private static double crossValidate(SongClassifier agent, int testSets) {
 		int n = songNames.size();
 		int testSetSize = n / testSets;
@@ -104,7 +122,10 @@ public class Main {
 				Genre genre = agent.classify(songs.get(name));
 				if (genre.equals(labels.get(name)))
 					++correct;
+				System.out.print("x");
 			}
+			System.out.println();
+			System.out.println((double) (correct) / testSetSize);
 			total += (double) (correct) / testSetSize;
 		}
 		return total / testSets;
@@ -136,7 +157,7 @@ public class Main {
 				for (int j = 0; j < Song.FEATURES; ++j) {
 					feature[j] = Double.parseDouble(data[j]);
 				}
-				song.add(feature);
+				song.add(pca.transform(feature));
 			}
 			Genre genre = agent.classify(song);
 			out.println(filename + "," + genre.toString());

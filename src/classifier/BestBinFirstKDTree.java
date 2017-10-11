@@ -7,13 +7,20 @@ import java.util.TreeSet;
 public class BestBinFirstKDTree {
 	private int dataSize;
 	private Entry[] entries;
-	private int bins;
+	private double[] weights;
 
-	public BestBinFirstKDTree(List<Entry> entries, int dataSize, int bins) {
+	public BestBinFirstKDTree(List<Entry> entries, int dataSize) {
 		this.dataSize = dataSize;
 		this.entries = entries.toArray(new Entry[entries.size()]);
-		this.bins = bins;
+		weights = new double[dataSize];
+		for (int i = 0; i < dataSize; ++i) {
+			weights[i] = 1.0;
+		}
 		create(0, this.entries.length, 0);
+	}
+
+	public void setWeights(double[] weights) {
+		this.weights = weights;
 	}
 
 	private void create(int begin, int end, int depth) {
@@ -51,7 +58,7 @@ public class BestBinFirstKDTree {
 		currentNearest = new Entry[k];
 		queue = new TreeSet<>((lhs, rhs) -> Double.compare(lhs.dist, rhs.dist));
 		nearest(0, entries.length, feature, 0);
-		for (int i = 0; i < bins; ++i) {
+		for (int i = 0; i < 10 * k; ++i) {
 			if (queue.isEmpty())
 				break;
 			Node node = queue.first();
@@ -94,7 +101,8 @@ public class BestBinFirstKDTree {
 
 	private boolean crosses(Entry median, double[] feature, int axis) {
 		for (Entry entry : currentNearest) {
-			if (entry == null || Math.abs(feature[axis] - median.feature[axis]) < distance(feature, entry.feature))
+			if (entry == null || Math.abs(weights[axis] * (feature[axis] - median.feature[axis])) < distance(feature,
+					entry.feature))
 				return true;
 		}
 		return false;
@@ -103,7 +111,8 @@ public class BestBinFirstKDTree {
 	private double distance(double[] lhs, double[] rhs) {
 		double result = 0;
 		for (int i = 0; i < dataSize; ++i) {
-			result += (lhs[i] - rhs[i]) * (lhs[i] - rhs[i]);
+			double dx = weights[i] * (lhs[i] - rhs[i]);
+			result += dx * dx;
 		}
 		return Math.sqrt(result);
 	}

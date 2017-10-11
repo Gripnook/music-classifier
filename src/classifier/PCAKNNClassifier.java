@@ -36,7 +36,7 @@ public class PCAKNNClassifier implements SongClassifier {
 		for (Entry entry : entries) {
 			entry.feature = pca.transform(entry.feature);
 		}
-		tree = new BestBinFirstKDTree(entries, dataSize, 5);
+		tree = new BestBinFirstKDTree(entries, dataSize);
 	}
 
 	@Override
