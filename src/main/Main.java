@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import classifier.DecisionForestClassifier;
 import classifier.GaussianClassifier;
 import classifier.KNNClassifier;
 import classifier.SongClassifier;
@@ -36,8 +37,10 @@ public class Main {
 		System.out.println("1NN: " + leaveOneOutCrossValidate(agent));
 		agent = new KNNClassifier(10);
 		System.out.println("10NN: " + leaveOneOutCrossValidate(agent));
-		agent = new WeighedKNNClassifier(100);
-		System.out.println("weighed 100NN: " + leaveOneOutCrossValidate(agent));
+		agent = new WeighedKNNClassifier(50);
+		System.out.println("weighed 50NN: " + leaveOneOutCrossValidate(agent));
+		agent = new DecisionForestClassifier(10);
+		System.out.println("decision forest (10): " + leaveOneOutCrossValidate(agent));
 
 		// train(agent);
 		// classifyTestSet(agent);

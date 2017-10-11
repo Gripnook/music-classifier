@@ -37,17 +37,17 @@ public class WeighedKNNClassifier implements SongClassifier {
 		mahalanobis = new Mahalanobis(data, Song.FEATURES);
 	}
 
-	private static final Genre[] genres = Genre.class.getEnumConstants();
-	private static final Map<Genre, Integer> genreIndices = new HashMap<>();
+	private static final Genre[] GENRES = Genre.class.getEnumConstants();
+	private static final Map<Genre, Integer> GENRE_INDICES = new HashMap<>();
 	static {
-		for (int i = 0; i < genres.length; ++i) {
-			genreIndices.put(genres[i], i);
+		for (int i = 0; i < GENRES.length; ++i) {
+			GENRE_INDICES.put(GENRES[i], i);
 		}
 	}
 
 	@Override
 	public Genre classify(List<double[]> song) {
-		Stats stats = new Stats(genres.length);
+		Stats stats = new Stats(GENRES.length);
 		for (double[] feature : song) {
 			stats.add(classify(feature));
 		}
@@ -56,15 +56,15 @@ public class WeighedKNNClassifier implements SongClassifier {
 
 	private double[] classify(double[] feature) {
 		Entry[] nearest = tree.nearest(k, feature);
-		double[] probabilities = new double[genres.length];
+		double[] probabilities = new double[GENRES.length];
 		for (Entry entry : nearest) {
 			double dist = distance(entry.feature, feature);
 			if (dist == 0) {
-				double[] guaranteed = new double[genres.length];
-				guaranteed[genreIndices.get(entry.genre)] = 1.0;
+				double[] guaranteed = new double[GENRES.length];
+				guaranteed[GENRE_INDICES.get(entry.genre)] = 1.0;
 				return guaranteed;
 			}
-			probabilities[genreIndices.get(entry.genre)] += 1 / (dist * dist);
+			probabilities[GENRE_INDICES.get(entry.genre)] += 1 / (dist * dist);
 		}
 		return normalize(probabilities);
 	}
@@ -72,11 +72,11 @@ public class WeighedKNNClassifier implements SongClassifier {
 	private Genre maximumLikelihood(double[] probabilities) {
 		double max = 0;
 		Genre result = null;
-		for (int i = 0; i < genres.length; ++i) {
+		for (int i = 0; i < GENRES.length; ++i) {
 			double probability = probabilities[i];
 			if (probability > max) {
 				max = probability;
-				result = genres[i];
+				result = GENRES[i];
 			}
 		}
 		return result;
@@ -87,7 +87,7 @@ public class WeighedKNNClassifier implements SongClassifier {
 		for (double probability : probabilities) {
 			sum += probability;
 		}
-		for (int i = 0; i < genres.length; ++i) {
+		for (int i = 0; i < GENRES.length; ++i) {
 			probabilities[i] /= sum;
 		}
 		return probabilities;
