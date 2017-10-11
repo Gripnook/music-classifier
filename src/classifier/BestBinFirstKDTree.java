@@ -79,16 +79,13 @@ public class BestBinFirstKDTree {
 
 		int medianIndex = (begin + end) / 2;
 		Entry entry = entries[medianIndex];
+		check(entry, feature);
 		if (feature[axis] < entry.feature[axis]) {
 			nearest(begin, medianIndex, feature, depth + 1);
-			if (crosses(entry, feature, axis)) {
-				queue.add(new Node(distance(entry.feature, feature), medianIndex, end, depth + 1));
-			}
+			queue.add(new Node(distance(entry.feature, feature), medianIndex + 1, end, depth + 1));
 		} else {
-			nearest(medianIndex, end, feature, depth + 1);
-			if (crosses(entry, feature, axis)) {
-				queue.add(new Node(distance(entry.feature, feature), begin, medianIndex, depth + 1));
-			}
+			nearest(medianIndex + 1, end, feature, depth + 1);
+			queue.add(new Node(distance(entry.feature, feature), begin, medianIndex, depth + 1));
 		}
 	}
 
@@ -102,20 +99,7 @@ public class BestBinFirstKDTree {
 		}
 	}
 
-	private boolean crosses(Entry median, double[] feature, int axis) {
-		for (Entry entry : currentNearest) {
-			if (entry == null || distance(feature, median.feature, axis) < distance(feature, entry.feature)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private double distance(double[] lhs, double[] rhs) {
 		return mahalanobis.distance(lhs, rhs);
-	}
-
-	private double distance(double[] lhs, double[] rhs, int axis) {
-		return mahalanobis.distance(lhs, rhs, axis);
 	}
 }

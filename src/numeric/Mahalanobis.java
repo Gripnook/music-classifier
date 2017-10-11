@@ -26,10 +26,4 @@ public class Mahalanobis {
 		}
 		return Math.sqrt(result);
 	}
-
-	public double distance(double[] lhs, double[] rhs, int dimension) {
-		double dx = (lhs[dimension] - rhs[dimension]);
-		double result = dx * inverseCovariance[dimension][dimension] * dx;
-		return Math.sqrt(result);
-	}
 }
