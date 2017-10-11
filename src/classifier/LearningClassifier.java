@@ -8,7 +8,7 @@ import main.Genre;
 import main.Song;
 
 public class LearningClassifier implements SongClassifier {
-	private WeighedKNNClassifier classifier = new WeighedKNNClassifier(7);
+	private WeighedKNNClassifier classifier = new WeighedKNNClassifier(10);
 	private double[] weights = new double[Song.FEATURES];
 	private double[] prevWeights = new double[Song.FEATURES];
 	private double success = 0.0;
