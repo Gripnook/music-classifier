@@ -60,7 +60,7 @@ public class WeighedKNNClassifier implements SongClassifier {
 		Entry[] nearest = tree.nearest(k, feature);
 		double[] probabilities = new double[genres.length];
 		for (Entry entry : nearest) {
-			double dist = distance(entry.feature, feature);
+			double dist = tree.distance(entry.feature, feature);
 			if (dist == 0) {
 				double[] guaranteed = new double[genres.length];
 				guaranteed[genreIndices.get(entry.genre)] = 1.0;
@@ -82,15 +82,6 @@ public class WeighedKNNClassifier implements SongClassifier {
 			}
 		}
 		return result;
-	}
-
-	private double distance(double[] lhs, double[] rhs) {
-		double result = 0;
-		for (int i = 0; i < Song.FEATURES; ++i) {
-			double dx = weights[i] * (lhs[i] - rhs[i]);
-			result += dx * dx;
-		}
-		return Math.sqrt(result);
 	}
 
 	private double[] normalize(double[] probabilities) {

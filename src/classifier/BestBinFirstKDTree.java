@@ -4,14 +4,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+import numeric.Matrix;
+import numeric.Stats;
+
 public class BestBinFirstKDTree {
 	private int dataSize;
 	private Entry[] entries;
 	private double[] weights;
+	private double[][] inverseCovariance;
 
 	public BestBinFirstKDTree(List<Entry> entries, int dataSize) {
 		this.dataSize = dataSize;
 		this.entries = entries.toArray(new Entry[entries.size()]);
+		Stats stats = new Stats(dataSize);
+		for (Entry entry : entries) {
+			stats.add(entry.feature);
+		}
+		inverseCovariance = Matrix.invert(stats.covariance());
 		weights = new double[dataSize];
 		for (int i = 0; i < dataSize; ++i) {
 			weights[i] = 1.0;
@@ -78,14 +87,10 @@ public class BestBinFirstKDTree {
 		check(entry, feature);
 		if (feature[axis] < entry.feature[axis]) {
 			nearest(begin, medianIndex, feature, depth + 1);
-			if (crosses(entry, feature, axis)) {
-				queue.add(new Node(distance(entry.feature, feature), medianIndex + 1, end, depth + 1));
-			}
+			queue.add(new Node(distance(entry.feature, feature), medianIndex + 1, end, depth + 1));
 		} else {
 			nearest(medianIndex + 1, end, feature, depth + 1);
-			if (crosses(entry, feature, axis)) {
-				queue.add(new Node(distance(entry.feature, feature), begin, medianIndex, depth + 1));
-			}
+			queue.add(new Node(distance(entry.feature, feature), begin, medianIndex, depth + 1));
 		}
 	}
 
@@ -99,20 +104,14 @@ public class BestBinFirstKDTree {
 		}
 	}
 
-	private boolean crosses(Entry median, double[] feature, int axis) {
-		for (Entry entry : currentNearest) {
-			if (entry == null || Math.abs(weights[axis] * (feature[axis] - median.feature[axis])) < distance(feature,
-					entry.feature))
-				return true;
-		}
-		return false;
-	}
-
-	private double distance(double[] lhs, double[] rhs) {
+	public double distance(double[] lhs, double[] rhs) {
 		double result = 0;
 		for (int i = 0; i < dataSize; ++i) {
 			double dx = weights[i] * (lhs[i] - rhs[i]);
-			result += dx * dx;
+			for (int j = 0; j < dataSize; ++j) {
+				double dy = weights[j] * (lhs[j] - rhs[j]);
+				result += dx * inverseCovariance[i][j] * dy;
+			}
 		}
 		return Math.sqrt(result);
 	}
