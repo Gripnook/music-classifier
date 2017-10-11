@@ -7,36 +7,34 @@ import java.util.Map;
 
 import main.Genre;
 import main.Song;
+import numeric.Mahalanobis;
 import numeric.Stats;
 
 public class WeighedKNNClassifier implements SongClassifier {
 	private int k;
 	private List<Entry> songs = new ArrayList<>();
 	private BestBinFirstKDTree tree = null;
-	private double[] weights;
+	private Mahalanobis mahalanobis = null;
 
 	public WeighedKNNClassifier(int k) {
 		this.k = k;
-		weights = new double[Song.FEATURES];
-		for (int i = 0; i < Song.FEATURES; ++i) {
-			weights[i] = 1.0;
-		}
-	}
-
-	public void setWeights(double[] weights) {
-		this.weights = weights;
 	}
 
 	@Override
 	public void add(List<double[]> song, Genre genre) {
-		for (double[] feature : song)
+		for (double[] feature : song) {
 			songs.add(new Entry(feature, genre));
+		}
 	}
 
 	@Override
 	public void train() {
 		tree = new BestBinFirstKDTree(songs, Song.FEATURES);
-		tree.setWeights(weights);
+		List<double[]> data = new ArrayList<>();
+		for (Entry song : songs) {
+			data.add(song.feature);
+		}
+		mahalanobis = new Mahalanobis(data, Song.FEATURES);
 	}
 
 	private static final Genre[] genres = Genre.class.getEnumConstants();
@@ -60,7 +58,7 @@ public class WeighedKNNClassifier implements SongClassifier {
 		Entry[] nearest = tree.nearest(k, feature);
 		double[] probabilities = new double[genres.length];
 		for (Entry entry : nearest) {
-			double dist = tree.distance(entry.feature, feature);
+			double dist = distance(entry.feature, feature);
 			if (dist == 0) {
 				double[] guaranteed = new double[genres.length];
 				guaranteed[genreIndices.get(entry.genre)] = 1.0;
@@ -86,16 +84,23 @@ public class WeighedKNNClassifier implements SongClassifier {
 
 	private double[] normalize(double[] probabilities) {
 		double sum = 0;
-		for (double probability : probabilities)
+		for (double probability : probabilities) {
 			sum += probability;
-		for (int i = 0; i < genres.length; ++i)
+		}
+		for (int i = 0; i < genres.length; ++i) {
 			probabilities[i] /= sum;
+		}
 		return probabilities;
+	}
+
+	private double distance(double[] lhs, double[] rhs) {
+		return mahalanobis.distance(lhs, rhs);
 	}
 
 	@Override
 	public void clear() {
 		songs = new ArrayList<>();
 		tree = null;
+		mahalanobis = null;
 	}
 }

@@ -6,8 +6,9 @@ public class Matrix {
 	public static SimpleMatrix convertMatrix(double[][] matrix) {
 		SimpleMatrix result = new SimpleMatrix(matrix.length, matrix.length);
 		for (int i = 0; i < matrix.length; ++i) {
-			if (matrix[i].length != matrix.length)
+			if (matrix[i].length != matrix.length) {
 				throw new Error("matrix must be square");
+			}
 			for (int j = 0; j < matrix.length; ++j) {
 				result.set(i, j, matrix[i][j]);
 			}
@@ -34,8 +35,9 @@ public class Matrix {
 	}
 
 	public static double[] convertVector(SimpleMatrix vector) {
-		if (!vector.isVector())
+		if (!vector.isVector()) {
 			throw new Error("matrix must be a vector");
+		}
 		double[] result = new double[vector.getNumElements()];
 		for (int i = 0; i < vector.getNumElements(); ++i) {
 			result[i] = vector.get(i);

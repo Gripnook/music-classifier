@@ -22,8 +22,9 @@ public class TotalGaussianClassifier implements SongClassifier {
 
 	@Override
 	public void add(List<double[]> song, Genre genre) {
-		for (double[] feature : song)
+		for (double[] feature : song) {
 			stats.get(genre).add(feature);
+		}
 	}
 
 	@Override
@@ -45,7 +46,7 @@ public class TotalGaussianClassifier implements SongClassifier {
 			for (double[] feature : song) {
 				for (int i = 0; i < Song.FEATURES; ++i) {
 					for (int j = 0; j < Song.FEATURES; ++j) {
-						unllCandidate += (feature[i] - average[i]) * (feature[j] - average[j]) * inverseCov[i][j];
+						unllCandidate += (feature[i] - average[i]) * inverseCov[i][j] * (feature[j] - average[j]);
 					}
 				}
 			}

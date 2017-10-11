@@ -23,8 +23,9 @@ public class Stats {
 	}
 
 	public double[] average() {
-		if (dataCount == 0)
+		if (dataCount == 0) {
 			return null;
+		}
 
 		double[] result = new double[dataSize];
 		for (int i = 0; i < dataSize; ++i) {
@@ -34,8 +35,9 @@ public class Stats {
 	}
 
 	public double[][] covariance() {
-		if (dataCount == 0 || dataCount == 1)
+		if (dataCount == 0 || dataCount == 1) {
 			return null;
+		}
 
 		double[] average = average();
 		double[][] result = new double[dataSize][dataSize];

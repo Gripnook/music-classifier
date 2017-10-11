@@ -1,11 +1,10 @@
 package classifier;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import main.Genre;
+import numeric.Plurality;
 
 public class HybridClassifier implements SongClassifier {
 	private List<SongClassifier> classifiers = new ArrayList<>();
@@ -16,49 +15,31 @@ public class HybridClassifier implements SongClassifier {
 
 	@Override
 	public void add(List<double[]> song, Genre genre) {
-		for (SongClassifier classifier : classifiers)
+		for (SongClassifier classifier : classifiers) {
 			classifier.add(song, genre);
+		}
 	}
 
 	@Override
 	public void train() {
-		for (SongClassifier classifier : classifiers)
+		for (SongClassifier classifier : classifiers) {
 			classifier.train();
+		}
 	}
 
 	@Override
 	public Genre classify(List<double[]> song) {
-		Map<Genre, Integer> counts = new HashMap<>();
+		Plurality<Genre> plurality = new Plurality<>();
 		for (SongClassifier classifier : classifiers) {
-			Genre genre = classifier.classify(song);
-			Integer count = counts.get(genre);
-			if (count == null) {
-				count = new Integer(0);
-			}
-			++count;
-			if (count > classifiers.size() / 2)
-				return genre;
-			counts.put(genre, count);
+			plurality.add(classifier.classify(song));
 		}
-		return consensus(counts);
-	}
-
-	private Genre consensus(Map<Genre, Integer> counts) {
-		int max = 0;
-		Genre result = null;
-		for (Genre genre : counts.keySet()) {
-			int count = counts.get(genre);
-			if (count > max) {
-				max = count;
-				result = genre;
-			}
-		}
-		return result;
+		return plurality.vote();
 	}
 
 	@Override
 	public void clear() {
-		for (SongClassifier classifier : classifiers)
+		for (SongClassifier classifier : classifiers) {
 			classifier.clear();
+		}
 	}
 }

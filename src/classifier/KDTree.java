@@ -10,11 +10,11 @@ public class KDTree {
 	public KDTree(List<Entry> entries, int dataSize) {
 		this.dataSize = dataSize;
 		this.entries = entries.toArray(new Entry[entries.size()]);
-		create(0, this.entries.length, 0);
+		create(0, entries.size(), 0);
 	}
 
 	private void create(int begin, int end, int depth) {
-		if (begin == end) {
+		if (begin + 1 <= end) {
 			return;
 		}
 
@@ -37,21 +37,22 @@ public class KDTree {
 	}
 
 	private void nearest(int begin, int end, double[] feature, int depth) {
-		if (begin == end)
+		if (begin + 1 == end) {
+			check(entries[begin], feature);
 			return;
+		}
 
 		int axis = depth % dataSize;
 
 		int medianIndex = (begin + end) / 2;
 		Entry entry = entries[medianIndex];
-		check(entry, feature);
 		if (feature[axis] < entry.feature[axis]) {
 			nearest(begin, medianIndex, feature, depth + 1);
 			if (crosses(entry, feature, axis)) {
-				nearest(medianIndex + 1, end, feature, depth + 1);
+				nearest(medianIndex, end, feature, depth + 1);
 			}
 		} else {
-			nearest(medianIndex + 1, end, feature, depth + 1);
+			nearest(medianIndex, end, feature, depth + 1);
 			if (crosses(entry, feature, axis)) {
 				nearest(begin, medianIndex, feature, depth + 1);
 			}
@@ -70,8 +71,9 @@ public class KDTree {
 
 	private boolean crosses(Entry median, double[] feature, int axis) {
 		for (Entry entry : currentNearest) {
-			if (entry == null || Math.abs(feature[axis] - median.feature[axis]) < distance(feature, entry.feature))
+			if (entry == null || distance(feature, median.feature, axis) < distance(feature, entry.feature)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -82,5 +84,9 @@ public class KDTree {
 			result += (lhs[i] - rhs[i]) * (lhs[i] - rhs[i]);
 		}
 		return Math.sqrt(result);
+	}
+
+	private double distance(double[] lhs, double[] rhs, int axis) {
+		return Math.abs(lhs[axis] - rhs[axis]);
 	}
 }

@@ -23,8 +23,9 @@ public class GaussianClassifier implements SongClassifier {
 	@Override
 	public void add(List<double[]> song, Genre genre) {
 		Stats songStats = new Stats(Song.FEATURES);
-		for (double[] feature : song)
+		for (double[] feature : song) {
 			songStats.add(feature);
+		}
 		stats.get(genre).add(songStats.average());
 	}
 
@@ -39,8 +40,9 @@ public class GaussianClassifier implements SongClassifier {
 	@Override
 	public Genre classify(List<double[]> song) {
 		Stats songStats = new Stats(Song.FEATURES);
-		for (double[] feature : song)
+		for (double[] feature : song) {
 			songStats.add(feature);
+		}
 		double[] feature = songStats.average();
 
 		Genre result = null;
@@ -51,7 +53,7 @@ public class GaussianClassifier implements SongClassifier {
 			double unllCandidate = 0;
 			for (int i = 0; i < Song.FEATURES; ++i) {
 				for (int j = 0; j < Song.FEATURES; ++j) {
-					unllCandidate += (feature[i] - average[i]) * (feature[j] - average[j]) * inverseCov[i][j];
+					unllCandidate += (feature[i] - average[i]) * inverseCov[i][j] * (feature[j] - average[j]);
 				}
 			}
 			if (unllCandidate < unll) {

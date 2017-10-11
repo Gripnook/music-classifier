@@ -1,39 +1,30 @@
 package classifier;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
-import numeric.Matrix;
-import numeric.Stats;
+import numeric.Mahalanobis;
 
 public class BestBinFirstKDTree {
 	private int dataSize;
 	private Entry[] entries;
-	private double[] weights;
-	private double[][] inverseCovariance;
+	private Mahalanobis mahalanobis;
 
 	public BestBinFirstKDTree(List<Entry> entries, int dataSize) {
 		this.dataSize = dataSize;
 		this.entries = entries.toArray(new Entry[entries.size()]);
-		Stats stats = new Stats(dataSize);
+		List<double[]> data = new ArrayList<>();
 		for (Entry entry : entries) {
-			stats.add(entry.feature);
+			data.add(entry.feature);
 		}
-		inverseCovariance = Matrix.invert(stats.covariance());
-		weights = new double[dataSize];
-		for (int i = 0; i < dataSize; ++i) {
-			weights[i] = 1.0;
-		}
-		create(0, this.entries.length, 0);
-	}
-
-	public void setWeights(double[] weights) {
-		this.weights = weights;
+		mahalanobis = new Mahalanobis(data, dataSize);
+		create(0, entries.size(), 0);
 	}
 
 	private void create(int begin, int end, int depth) {
-		if (begin == end) {
+		if (begin + 1 <= end) {
 			return;
 		}
 
@@ -67,9 +58,11 @@ public class BestBinFirstKDTree {
 		currentNearest = new Entry[k];
 		queue = new TreeSet<>((lhs, rhs) -> Double.compare(lhs.dist, rhs.dist));
 		nearest(0, entries.length, feature, 0);
-		for (int i = 0; i < 10 * k; ++i) {
-			if (queue.isEmpty())
+		int searchSize = Math.max(2 * k, 200);
+		for (int i = 0; i < searchSize; ++i) {
+			if (queue.isEmpty()) {
 				break;
+			}
 			Node node = queue.first();
 			nearest(node.begin, node.end, feature, node.depth);
 		}
@@ -77,20 +70,25 @@ public class BestBinFirstKDTree {
 	}
 
 	private void nearest(int begin, int end, double[] feature, int depth) {
-		if (begin == end)
+		if (begin + 1 == end) {
+			check(entries[begin], feature);
 			return;
+		}
 
 		int axis = depth % dataSize;
 
 		int medianIndex = (begin + end) / 2;
 		Entry entry = entries[medianIndex];
-		check(entry, feature);
 		if (feature[axis] < entry.feature[axis]) {
 			nearest(begin, medianIndex, feature, depth + 1);
-			queue.add(new Node(distance(entry.feature, feature), medianIndex + 1, end, depth + 1));
+			if (crosses(entry, feature, axis)) {
+				queue.add(new Node(distance(entry.feature, feature), medianIndex, end, depth + 1));
+			}
 		} else {
-			nearest(medianIndex + 1, end, feature, depth + 1);
-			queue.add(new Node(distance(entry.feature, feature), begin, medianIndex, depth + 1));
+			nearest(medianIndex, end, feature, depth + 1);
+			if (crosses(entry, feature, axis)) {
+				queue.add(new Node(distance(entry.feature, feature), begin, medianIndex, depth + 1));
+			}
 		}
 	}
 
@@ -104,15 +102,20 @@ public class BestBinFirstKDTree {
 		}
 	}
 
-	public double distance(double[] lhs, double[] rhs) {
-		double result = 0;
-		for (int i = 0; i < dataSize; ++i) {
-			double dx = weights[i] * (lhs[i] - rhs[i]);
-			for (int j = 0; j < dataSize; ++j) {
-				double dy = weights[j] * (lhs[j] - rhs[j]);
-				result += dx * inverseCovariance[i][j] * dy;
+	private boolean crosses(Entry median, double[] feature, int axis) {
+		for (Entry entry : currentNearest) {
+			if (entry == null || distance(feature, median.feature, axis) < distance(feature, entry.feature)) {
+				return true;
 			}
 		}
-		return Math.sqrt(result);
+		return false;
+	}
+
+	private double distance(double[] lhs, double[] rhs) {
+		return mahalanobis.distance(lhs, rhs);
+	}
+
+	private double distance(double[] lhs, double[] rhs, int axis) {
+		return mahalanobis.distance(lhs, rhs, axis);
 	}
 }
