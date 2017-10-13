@@ -1,20 +1,20 @@
-package classifier;
+package classifier.knn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import classifier.Entry;
+import classifier.SongClassifier;
 import main.Genre;
 import main.Song;
-import numeric.Mahalanobis;
 import numeric.Stats;
 
 public class WeighedKNNClassifier implements SongClassifier {
 	private int k;
 	private List<Entry> songs = new ArrayList<>();
 	private BestBinFirstKDTree tree = null;
-	private Mahalanobis mahalanobis = null;
 
 	public WeighedKNNClassifier(int k) {
 		this.k = k;
@@ -34,7 +34,6 @@ public class WeighedKNNClassifier implements SongClassifier {
 		for (Entry song : songs) {
 			data.add(song.feature);
 		}
-		mahalanobis = new Mahalanobis(data, Song.FEATURES);
 	}
 
 	private static final Genre[] GENRES = Genre.class.getEnumConstants();
@@ -94,13 +93,16 @@ public class WeighedKNNClassifier implements SongClassifier {
 	}
 
 	private double distance(double[] lhs, double[] rhs) {
-		return mahalanobis.distance(lhs, rhs);
+		double result = 0;
+		for (int i = 0; i < Song.FEATURES; ++i) {
+			result += (lhs[i] - rhs[i]) * (lhs[i] - rhs[i]);
+		}
+		return Math.sqrt(result);
 	}
 
 	@Override
 	public void clear() {
 		songs = new ArrayList<>();
 		tree = null;
-		mahalanobis = null;
 	}
 }

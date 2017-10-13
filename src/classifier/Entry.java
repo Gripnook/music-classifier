@@ -2,7 +2,7 @@ package classifier;
 
 import main.Genre;
 
-class Entry {
+public class Entry {
 	public double[] feature;
 	public Genre genre;
 

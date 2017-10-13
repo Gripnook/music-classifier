@@ -1,9 +1,11 @@
-package classifier;
+package classifier.tree;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import classifier.Entry;
+import classifier.SongClassifier;
 import main.Genre;
 import numeric.Plurality;
 

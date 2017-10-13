@@ -1,8 +1,10 @@
-package classifier;
+package classifier.knn;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import classifier.Entry;
+import classifier.SongClassifier;
 import main.Genre;
 import main.Song;
 import numeric.Plurality;

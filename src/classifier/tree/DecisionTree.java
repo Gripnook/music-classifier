@@ -1,4 +1,4 @@
-package classifier;
+package classifier.tree;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import classifier.Entry;
 import main.Genre;
 import main.Song;
 import numeric.Plurality;

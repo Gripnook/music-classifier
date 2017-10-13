@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import classifier.DecisionForestClassifier;
-import classifier.GaussianClassifier;
-import classifier.KNNClassifier;
 import classifier.SongClassifier;
-import classifier.TotalGaussianClassifier;
-import classifier.WeighedKNNClassifier;
+import classifier.gaussian.GaussianClassifier;
+import classifier.gaussian.TotalGaussianClassifier;
+import classifier.knn.KNNClassifier;
+import classifier.knn.WeighedKNNClassifier;
+import classifier.tree.DecisionForestClassifier;
 
 public class Main {
 	private static List<String> songNames = new ArrayList<>();
@@ -87,7 +87,7 @@ public class Main {
 		double total = 0;
 		Collections.shuffle(songNames);
 		for (int i = 0; i < testSets; ++i) {
-			System.out.print((i + 1) + " / " + testSets + "; ");
+			System.out.print((i + 1) + " / " + testSets + ": ");
 			agent.clear();
 			for (int j = 0; j < n; ++j) {
 				if (j >= i * testSetSize && j < (i + 1) * testSetSize) {
@@ -106,13 +106,10 @@ public class Main {
 				}
 			}
 			total += (double) (correct) / testSetSize;
+			System.out.print(((double) (correct) / testSetSize) + "; ");
 		}
 		System.out.println();
 		return total / testSets;
-	}
-
-	private static double leaveOneOutCrossValidate(SongClassifier agent) {
-		return crossValidate(agent, songNames.size());
 	}
 
 	private static void train(SongClassifier agent) {

@@ -1,15 +1,23 @@
-package classifier;
+package classifier.knn;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 
-public class KDTree {
+import classifier.Entry;
+
+public class BestBinFirstKDTree {
 	private int dataSize;
 	private Entry[] entries;
 
-	public KDTree(List<Entry> entries, int dataSize) {
+	public BestBinFirstKDTree(List<Entry> entries, int dataSize) {
 		this.dataSize = dataSize;
 		this.entries = entries.toArray(new Entry[entries.size()]);
+		List<double[]> data = new ArrayList<>();
+		for (Entry entry : entries) {
+			data.add(entry.feature);
+		}
 		create(0, entries.size(), 0);
 	}
 
@@ -30,9 +38,32 @@ public class KDTree {
 
 	private Entry[] currentNearest;
 
+	private static class Node {
+		public int begin, end, depth;
+		public double dist;
+
+		public Node(double dist, int begin, int end, int depth) {
+			this.dist = dist;
+			this.begin = begin;
+			this.end = end;
+			this.depth = depth;
+		}
+	}
+
+	private TreeSet<Node> queue;
+
 	public Entry[] nearest(int k, double[] feature) {
 		currentNearest = new Entry[k];
+		queue = new TreeSet<>((lhs, rhs) -> Double.compare(lhs.dist, rhs.dist));
 		nearest(0, entries.length, feature, 0);
+		int searchSize = Math.max(64 * k, 200);
+		for (int i = 0; i < searchSize; ++i) {
+			if (queue.isEmpty()) {
+				break;
+			}
+			Node node = queue.first();
+			nearest(node.begin, node.end, feature, node.depth);
+		}
 		return currentNearest;
 	}
 
@@ -52,12 +83,12 @@ public class KDTree {
 		if (feature[axis] < entry.feature[axis]) {
 			nearest(begin, medianIndex, feature, depth + 1);
 			if (crosses(entry, feature, axis)) {
-				nearest(medianIndex + 1, end, feature, depth + 1);
+				queue.add(new Node(distance(entry.feature, feature), medianIndex + 1, end, depth + 1));
 			}
 		} else {
 			nearest(medianIndex + 1, end, feature, depth + 1);
 			if (crosses(entry, feature, axis)) {
-				nearest(begin, medianIndex, feature, depth + 1);
+				queue.add(new Node(distance(entry.feature, feature), begin, medianIndex, depth + 1));
 			}
 		}
 	}

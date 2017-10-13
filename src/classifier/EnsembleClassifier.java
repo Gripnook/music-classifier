@@ -6,10 +6,10 @@ import java.util.List;
 import main.Genre;
 import numeric.Plurality;
 
-public class HybridClassifier implements SongClassifier {
+public class EnsembleClassifier implements SongClassifier {
 	private List<SongClassifier> classifiers = new ArrayList<>();
 
-	public HybridClassifier(List<SongClassifier> classifiers) {
+	public EnsembleClassifier(List<SongClassifier> classifiers) {
 		this.classifiers = classifiers;
 	}
 
