@@ -12,7 +12,7 @@ import numeric.Plurality;
 public class KNNClassifier implements SongClassifier {
 	private int k;
 	private List<Entry> songs = new ArrayList<>();
-	private BestBinFirstKDTree tree = null;
+	private KDTree tree = null;
 
 	public KNNClassifier(int k) {
 		this.k = k;
@@ -27,7 +27,7 @@ public class KNNClassifier implements SongClassifier {
 
 	@Override
 	public void train() {
-		tree = new BestBinFirstKDTree(songs, Song.FEATURES);
+		tree = new KDTree(songs, Song.FEATURES);
 	}
 
 	@Override

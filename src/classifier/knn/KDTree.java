@@ -16,7 +16,7 @@ public class KDTree {
 	}
 
 	private void create(int begin, int end, int depth) {
-		if (begin + 1 <= end) {
+		if (begin + 1 >= end) {
 			return;
 		}
 

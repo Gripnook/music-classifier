@@ -14,7 +14,7 @@ import numeric.Stats;
 public class WeighedKNNClassifier implements SongClassifier {
 	private int k;
 	private List<Entry> songs = new ArrayList<>();
-	private BestBinFirstKDTree tree = null;
+	private KDTree tree = null;
 
 	public WeighedKNNClassifier(int k) {
 		this.k = k;
@@ -29,7 +29,7 @@ public class WeighedKNNClassifier implements SongClassifier {
 
 	@Override
 	public void train() {
-		tree = new BestBinFirstKDTree(songs, Song.FEATURES);
+		tree = new KDTree(songs, Song.FEATURES);
 		List<double[]> data = new ArrayList<>();
 		for (Entry song : songs) {
 			data.add(song.feature);
