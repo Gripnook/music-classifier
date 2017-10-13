@@ -31,7 +31,7 @@ public class DecisionForestClassifier implements SongClassifier {
 		trees = new ArrayList<>();
 		int subsetSize = 1 << 16;
 		for (int i = 0; i < numTrees; ++i) {
-			// Sample a random subset of the data without replacement.
+			// Sample a random subset of the data with replacement.
 			List<Entry> data = new ArrayList<>();
 			for (int j = 0; j < subsetSize; ++j) {
 				int index = rng.nextInt(entries.size());

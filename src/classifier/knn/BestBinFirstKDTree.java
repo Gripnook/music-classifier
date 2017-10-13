@@ -53,15 +53,18 @@ public class BestBinFirstKDTree {
 	private TreeSet<Node> queue;
 
 	public Entry[] nearest(int k, double[] feature) {
+		return nearest(k, feature, Integer.MAX_VALUE);
+	}
+
+	public Entry[] nearest(int k, double[] feature, int searchSize) {
 		currentNearest = new Entry[k];
 		queue = new TreeSet<>((lhs, rhs) -> Double.compare(lhs.dist, rhs.dist));
 		nearest(0, entries.length, feature, 0);
-		int searchSize = Math.max(64 * k, 200);
 		for (int i = 0; i < searchSize; ++i) {
 			if (queue.isEmpty()) {
 				break;
 			}
-			Node node = queue.first();
+			Node node = queue.pollFirst();
 			nearest(node.begin, node.end, feature, node.depth);
 		}
 		return currentNearest;
