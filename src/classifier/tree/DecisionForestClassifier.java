@@ -9,6 +9,14 @@ import classifier.SongClassifier;
 import main.Genre;
 import numeric.Plurality;
 
+/**
+ * A classifier which bases its decisions on a plurality vote of randomized
+ * decision trees. It creates a set of N trees, each trained on a subset of the
+ * data, and selects the most likely genre based on votes from each tree.
+ *
+ * @author Andrei Purcarus
+ *
+ */
 public class DecisionForestClassifier implements SongClassifier {
 	private int numTrees;
 	private List<Entry> entries = new ArrayList<>();
@@ -44,15 +52,15 @@ public class DecisionForestClassifier implements SongClassifier {
 	@Override
 	public Genre classify(List<double[]> song) {
 		Plurality<Genre> plurality = new Plurality<>();
-		for (double[] feature : song) {
-			plurality.add(classify(feature));
+		for (DecisionTree tree : trees) {
+			plurality.add(classify(tree, song));
 		}
 		return plurality.vote();
 	}
 
-	private Genre classify(double[] feature) {
+	private Genre classify(DecisionTree tree, List<double[]> song) {
 		Plurality<Genre> plurality = new Plurality<>();
-		for (DecisionTree tree : trees) {
+		for (double[] feature : song) {
 			plurality.add(tree.classify(feature));
 		}
 		return plurality.vote();
