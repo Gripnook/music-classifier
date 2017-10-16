@@ -6,6 +6,13 @@ import java.util.List;
 import main.Genre;
 import numeric.Plurality;
 
+/**
+ * A classifier that allows for combining other classifiers and having them vote
+ * on the most likely result.
+ * 
+ * @author Andrei Purcarus
+ *
+ */
 public class EnsembleClassifier implements SongClassifier {
 	private List<SongClassifier> classifiers = new ArrayList<>();
 

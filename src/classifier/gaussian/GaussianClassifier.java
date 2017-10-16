@@ -10,6 +10,17 @@ import main.Song;
 import numeric.Matrix;
 import numeric.Stats;
 
+/**
+ * A classifier that classifies songs by computing the Gaussian distributions of
+ * each genre and finding the one that best describes the song to be classified.
+ * 
+ * This classifier uses average feature vectors for each song as the atomic
+ * units of computation. Therefore, it only compares averages of songs to each
+ * other.
+ * 
+ * @author Andrei Purcarus
+ *
+ */
 public class GaussianClassifier implements SongClassifier {
 	private Map<Genre, Stats> stats = new HashMap<>();
 	private Map<Genre, double[]> averages = new HashMap<>();
@@ -23,6 +34,7 @@ public class GaussianClassifier implements SongClassifier {
 
 	@Override
 	public void add(List<double[]> song, Genre genre) {
+		// Adds the average value of the song to the data set.
 		Stats songStats = new Stats(Song.FEATURES);
 		for (double[] feature : song) {
 			songStats.add(feature);
@@ -40,12 +52,14 @@ public class GaussianClassifier implements SongClassifier {
 
 	@Override
 	public Genre classify(List<double[]> song) {
+		// Uses the average value of the song for classification.
 		Stats songStats = new Stats(Song.FEATURES);
 		for (double[] feature : song) {
 			songStats.add(feature);
 		}
 		double[] feature = songStats.average();
 
+		// Minimizes the UNLL over all possible genres.
 		Genre result = null;
 		double unll = Double.MAX_VALUE;
 		for (Genre genre : Genre.class.getEnumConstants()) {

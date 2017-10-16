@@ -11,6 +11,16 @@ import main.Genre;
 import main.Song;
 import numeric.Stats;
 
+/**
+ * A nearest neighbour classifier which takes a weighed vote of the k nearest
+ * neighbours to classify new features. It then classifies songs by taking the
+ * genre with the maximum sum of weights over all its features.
+ * 
+ * The weight of a neighbour a distance d away is w = 1 / d^2.
+ * 
+ * @author Andrei Purcarus
+ *
+ */
 public class WeighedKNNClassifier implements SongClassifier {
 	private int k;
 	private List<Entry> songs = new ArrayList<>();
@@ -29,6 +39,7 @@ public class WeighedKNNClassifier implements SongClassifier {
 
 	@Override
 	public void train() {
+		// Uses a KD tree to speed up classification.
 		tree = new KDTree(songs, Song.FEATURES);
 		List<double[]> data = new ArrayList<>();
 		for (Entry song : songs) {
@@ -46,6 +57,9 @@ public class WeighedKNNClassifier implements SongClassifier {
 
 	@Override
 	public Genre classify(List<double[]> song) {
+		// Computes a probability vector over all genres for each feature, then
+		// averages them and takes the maximum likelihood (the genre with the
+		// highest probability).
 		Stats stats = new Stats(GENRES.length);
 		for (double[] feature : song) {
 			stats.add(classify(feature));
@@ -54,11 +68,14 @@ public class WeighedKNNClassifier implements SongClassifier {
 	}
 
 	private double[] classify(double[] feature) {
+		// Computes a probability vector over all genres by adding the weights
+		// of the k nearest neighbours and normalizing.
 		Entry[] nearest = tree.nearest(k, feature);
 		double[] probabilities = new double[GENRES.length];
 		for (Entry entry : nearest) {
 			double dist = distance(entry.feature, feature);
 			if (dist == 0) {
+				// For a distance of 0, we return probability 1 for this genre.
 				double[] guaranteed = new double[GENRES.length];
 				guaranteed[GENRE_INDICES.get(entry.genre)] = 1.0;
 				return guaranteed;

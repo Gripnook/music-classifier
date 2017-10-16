@@ -9,6 +9,14 @@ import main.Genre;
 import main.Song;
 import numeric.Plurality;
 
+/**
+ * A nearest neighbour classifier which takes the plurality vote of the k
+ * nearest neighbours to classify new features. It then classifies songs by
+ * taking the plurality vote of the individual feature classifications.
+ * 
+ * @author Andrei Purcarus
+ *
+ */
 public class KNNClassifier implements SongClassifier {
 	private int k;
 	private List<Entry> songs = new ArrayList<>();
@@ -27,6 +35,7 @@ public class KNNClassifier implements SongClassifier {
 
 	@Override
 	public void train() {
+		// Uses a KD tree to speed up classification.
 		tree = new KDTree(songs, Song.FEATURES);
 	}
 

@@ -10,6 +10,17 @@ import main.Song;
 import numeric.Matrix;
 import numeric.Stats;
 
+/**
+ * A classifier that classifies songs by computing the Gaussian distributions of
+ * each genre and finding the one that best describes the song to be classified.
+ * 
+ * This classifier uses the feature vectors of each song independently to
+ * compute the average and covariance of each genre. It then classifies each new
+ * song by finding the genre where all its feature vectors will fit best.
+ * 
+ * @author Andrei Purcarus
+ *
+ */
 public class TotalGaussianClassifier implements SongClassifier {
 	private Map<Genre, Stats> stats = new HashMap<>();
 	private Map<Genre, double[]> averages = new HashMap<>();
@@ -38,6 +49,7 @@ public class TotalGaussianClassifier implements SongClassifier {
 
 	@Override
 	public Genre classify(List<double[]> song) {
+		// Minimizes the UNLL over all possible genres.
 		Genre result = null;
 		double unll = Double.MAX_VALUE;
 		for (Genre genre : Genre.class.getEnumConstants()) {

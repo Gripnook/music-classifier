@@ -5,6 +5,15 @@ import java.util.List;
 
 import classifier.Entry;
 
+/**
+ * An implementation of a KD tree. This is a data structure that partitions data
+ * in N-dimensional space by splitting it along median planes. It can therefore
+ * allow for faster lookup of the nearest neighbours by eliminating regions of
+ * space where they cannot be located.
+ * 
+ * @author Andrei Purcarus
+ *
+ */
 public class KDTree {
 	private int dataSize;
 	private Entry[] entries;
@@ -20,9 +29,12 @@ public class KDTree {
 			return;
 		}
 
+		// Chooses the current axis based on the depth.
 		int axis = depth % dataSize;
 
-		// Find median on axis.
+		// Finds the median on the axis and partitions the data such that lower
+		// points on the axis lie below the median and higher points lie above
+		// it. Note that a partition algorithm can also be used here.
 		Arrays.sort(entries, begin, end, (lhs, rhs) -> Double.compare(lhs.feature[axis], rhs.feature[axis]));
 		int medianIndex = (begin + end) / 2;
 
@@ -46,18 +58,24 @@ public class KDTree {
 			return;
 		}
 
+		// Chooses the current axis based on the depth.
 		int axis = depth % dataSize;
 
+		// Checks the median.
 		int medianIndex = (begin + end) / 2;
 		Entry entry = entries[medianIndex];
 		check(entry, feature);
 		if (feature[axis] < entry.feature[axis]) {
 			nearest(begin, medianIndex, feature, depth + 1);
+			// Only checks the other side of the axis if it is possible that
+			// a neighbour nearer than those found so far can be located there.
 			if (crosses(entry, feature, axis)) {
 				nearest(medianIndex + 1, end, feature, depth + 1);
 			}
 		} else {
 			nearest(medianIndex + 1, end, feature, depth + 1);
+			// Only checks the other side of the axis if it is possible that
+			// a neighbour nearer than those found so far can be located there.
 			if (crosses(entry, feature, axis)) {
 				nearest(begin, medianIndex, feature, depth + 1);
 			}

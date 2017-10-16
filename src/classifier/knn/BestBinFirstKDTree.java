@@ -7,6 +7,22 @@ import java.util.TreeSet;
 
 import classifier.Entry;
 
+/**
+ * An implementation of a KD tree. This is a data structure that partitions data
+ * in N-dimensional space by splitting it along median planes. It can therefore
+ * allow for faster lookup of the nearest neighbours by eliminating regions of
+ * space where they cannot be located.
+ * 
+ * This implementation is one which uses a priority queue to keep track of the
+ * most likely subsections of space to look into next. This allows it to cut off
+ * the search after having visited sufficiently many nodes. While a KD tree can
+ * also use a cut off, it is less accurate to do so since it might not explore
+ * the best nodes first and will instead explore them based on the order in
+ * which they appear in the tree.
+ * 
+ * @author Andrei Purcarus
+ *
+ */
 public class BestBinFirstKDTree {
 	private int dataSize;
 	private Entry[] entries;
@@ -26,9 +42,12 @@ public class BestBinFirstKDTree {
 			return;
 		}
 
+		// Chooses the current axis based on the depth.
 		int axis = depth % dataSize;
 
-		// Find median on axis.
+		// Finds the median on the axis and partitions the data such that lower
+		// points on the axis lie below the median and higher points lie above
+		// it. Note that a partition algorithm can also be used here.
 		Arrays.sort(entries, begin, end, (lhs, rhs) -> Double.compare(lhs.feature[axis], rhs.feature[axis]));
 		int medianIndex = (begin + end) / 2;
 
@@ -78,20 +97,26 @@ public class BestBinFirstKDTree {
 			return;
 		}
 
+		// Chooses the current axis based on the depth.
 		int axis = depth % dataSize;
 
+		// Checks the median.
 		int medianIndex = (begin + end) / 2;
 		Entry entry = entries[medianIndex];
 		check(entry, feature);
 		if (feature[axis] < entry.feature[axis]) {
 			nearest(begin, medianIndex, feature, depth + 1);
+			// Only checks the other side of the axis if it is possible that
+			// a neighbour nearer than those found so far can be located there.
 			if (crosses(entry, feature, axis)) {
-				queue.add(new Node(distance(entry.feature, feature), medianIndex + 1, end, depth + 1));
+				queue.add(new Node(distance(entry.feature, feature, axis), medianIndex + 1, end, depth + 1));
 			}
 		} else {
 			nearest(medianIndex + 1, end, feature, depth + 1);
+			// Only checks the other side of the axis if it is possible that
+			// a neighbour nearer than those found so far can be located there.
 			if (crosses(entry, feature, axis)) {
-				queue.add(new Node(distance(entry.feature, feature), begin, medianIndex, depth + 1));
+				queue.add(new Node(distance(entry.feature, feature, axis), begin, medianIndex, depth + 1));
 			}
 		}
 	}
