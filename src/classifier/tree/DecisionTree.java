@@ -66,6 +66,7 @@ public class DecisionTree {
 			return new Node(plurality(begin, end));
 		}
 
+		// Splits the data on the best axis to minimize the entropy.
 		int axis = split(begin, end);
 		Arrays.sort(entries, begin, end, (lhs, rhs) -> Double.compare(lhs.feature[axis], rhs.feature[axis]));
 		double minEntropy = Double.MAX_VALUE;
@@ -90,6 +91,7 @@ public class DecisionTree {
 			++lessCounts[genreIndex];
 		}
 
+		// If there is no information to gain, we create a leaf node.
 		double informationGain = parentEntropy - minEntropy;
 		if (informationGain <= 0) {
 			return new Node(plurality(begin, end));
@@ -117,6 +119,13 @@ public class DecisionTree {
 		return true;
 	}
 
+	/**
+	 * Returns the axis with the split that minimizes the entropy.
+	 * 
+	 * @param begin
+	 * @param end
+	 * @return
+	 */
 	private int split(int begin, int end) {
 		int bestAxis = 0;
 		double minEntropy = Double.MAX_VALUE;
@@ -134,6 +143,14 @@ public class DecisionTree {
 		return bestAxis;
 	}
 
+	/**
+	 * Returns the entropy of the best split on the given axis.
+	 * 
+	 * @param begin
+	 * @param end
+	 * @param axis
+	 * @return
+	 */
 	private double split(int begin, int end, int axis) {
 		Arrays.sort(entries, begin, end, (lhs, rhs) -> Double.compare(lhs.feature[axis], rhs.feature[axis]));
 		double minEntropy = Double.MAX_VALUE;
@@ -156,6 +173,16 @@ public class DecisionTree {
 		return minEntropy;
 	}
 
+	/**
+	 * Computes the entropy of the given split.
+	 * 
+	 * @param begin
+	 * @param splitIndex
+	 * @param end
+	 * @param lessCounts
+	 * @param greaterCounts
+	 * @return
+	 */
 	private double entropy(int begin, int splitIndex, int end, int[] lessCounts, int[] greaterCounts) {
 		double totalSize = end - begin;
 		double lessSize = splitIndex - begin;
@@ -170,6 +197,14 @@ public class DecisionTree {
 		}
 	}
 
+	/**
+	 * Computes the entropy of the given range.
+	 * 
+	 * @param begin
+	 * @param end
+	 * @param counts
+	 * @return
+	 */
 	private double entropy(int begin, int end, int[] counts) {
 		double result = 0;
 		for (int i = 0; i < GENRES.length; ++i) {
