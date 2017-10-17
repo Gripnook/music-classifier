@@ -11,6 +11,16 @@ import main.Genre;
 import main.Song;
 import numeric.Plurality;
 
+/**
+ * A decision tree meant to be used in a randomized decision forest setting. It
+ * trains by dividing its data into two parts at each node in such a way as to
+ * maximize the information gain of the resulting split. It then assigns a genre
+ * to each leaf of the tree. To classify a new feature, it uses the splits in
+ * the tree to reach a leaf node and assigns it that genre.
+ * 
+ * @author Andrei Purcarus
+ *
+ */
 public class DecisionTree {
 	private static final Genre[] GENRES = Genre.class.getEnumConstants();
 	private static final Map<Genre, Integer> GENRE_INDICES = new HashMap<>();
@@ -20,6 +30,8 @@ public class DecisionTree {
 		}
 	}
 
+	// Uses a random subset of the features in each tree to minimize the bias
+	// towards features with a strong correlation to the data.
 	private static final int FEATURES = (int) Math.sqrt(Song.FEATURES);
 
 	private static class Node {
@@ -56,7 +68,7 @@ public class DecisionTree {
 
 		int axis = split(begin, end);
 		Arrays.sort(entries, begin, end, (lhs, rhs) -> Double.compare(lhs.feature[axis], rhs.feature[axis]));
-		double minImpurity = Double.MAX_VALUE;
+		double minEntropy = Double.MAX_VALUE;
 		int splitIndex = (begin + end) / 2;
 		int[] lessCounts = new int[GENRES.length];
 		int[] greaterCounts = new int[GENRES.length];
@@ -64,16 +76,23 @@ public class DecisionTree {
 			++greaterCounts[GENRE_INDICES.get(entries[i].genre)];
 		}
 
+		double parentEntropy = entropy(begin, end, greaterCounts);
+
 		for (int i = begin; i < end; ++i) {
-			double impurity = impurity(lessCounts, greaterCounts, begin, i, end);
-			if (impurity < minImpurity) {
-				minImpurity = impurity;
+			double entropy = entropy(begin, i, end, lessCounts, greaterCounts);
+			if (entropy < minEntropy) {
+				minEntropy = entropy;
 				splitIndex = i;
 			}
 
 			int genreIndex = GENRE_INDICES.get(entries[i].genre);
 			--greaterCounts[genreIndex];
 			++lessCounts[genreIndex];
+		}
+
+		double informationGain = parentEntropy - minEntropy;
+		if (informationGain <= 0) {
+			return new Node(plurality(begin, end));
 		}
 
 		Node node = new Node();
@@ -98,28 +117,26 @@ public class DecisionTree {
 		return true;
 	}
 
-	// Returns the axis over which the impurity is minimized when split optimally.
 	private int split(int begin, int end) {
 		int bestAxis = 0;
-		double minImpurity = Double.MAX_VALUE;
+		double minEntropy = Double.MAX_VALUE;
 		int[] candidates = new int[FEATURES];
 		for (int i = 0; i < FEATURES; ++i) {
 			candidates[i] = rng.nextInt(Song.FEATURES);
 		}
 		for (int axis : candidates) {
-			double impurity = split(begin, end, axis);
-			if (impurity < minImpurity) {
-				minImpurity = impurity;
+			double entropy = split(begin, end, axis);
+			if (entropy < minEntropy) {
+				minEntropy = entropy;
 				bestAxis = axis;
 			}
 		}
 		return bestAxis;
 	}
 
-	// Returns the impurity of the best split.
 	private double split(int begin, int end, int axis) {
 		Arrays.sort(entries, begin, end, (lhs, rhs) -> Double.compare(lhs.feature[axis], rhs.feature[axis]));
-		double minImpurity = Double.MAX_VALUE;
+		double minEntropy = Double.MAX_VALUE;
 		int[] lessCounts = new int[GENRES.length];
 		int[] greaterCounts = new int[GENRES.length];
 		for (int i = begin; i < end; ++i) {
@@ -127,29 +144,40 @@ public class DecisionTree {
 		}
 
 		for (int i = begin; i < end; ++i) {
-			double impurity = impurity(lessCounts, greaterCounts, begin, i, end);
-			if (impurity < minImpurity) {
-				minImpurity = impurity;
+			double entropy = entropy(begin, i, end, lessCounts, greaterCounts);
+			if (entropy < minEntropy) {
+				minEntropy = entropy;
 			}
 
 			int genreIndex = GENRE_INDICES.get(entries[i].genre);
 			--greaterCounts[genreIndex];
 			++lessCounts[genreIndex];
 		}
-		return minImpurity;
+		return minEntropy;
 	}
 
-	// Computes the Gini impurity of the split.
-	private double impurity(int[] lessCounts, int[] greaterCounts, int begin, int splitIndex, int end) {
+	private double entropy(int begin, int splitIndex, int end, int[] lessCounts, int[] greaterCounts) {
+		double totalSize = end - begin;
+		double lessSize = splitIndex - begin;
+		double greaterSize = end - splitIndex;
+		if (lessSize == 0) {
+			return entropy(splitIndex, end, greaterCounts);
+		} else if (greaterSize == 0) {
+			return entropy(begin, splitIndex, lessCounts);
+		} else {
+			return (lessSize / totalSize) * entropy(begin, splitIndex, lessCounts)
+					+ (greaterSize / totalSize) * entropy(splitIndex, end, greaterCounts);
+		}
+	}
+
+	private double entropy(int begin, int end, int[] counts) {
 		double result = 0;
 		for (int i = 0; i < GENRES.length; ++i) {
-			int lessCount = lessCounts[i];
-			double pLess = (double) (lessCount) / (splitIndex - begin);
-			result += (splitIndex - begin) * pLess * (1 - pLess);
-
-			int greaterCount = greaterCounts[i];
-			double pGreater = (double) (greaterCount) / (end - splitIndex);
-			result += (end - splitIndex) * pGreater * (1 - pGreater);
+			int count = counts[i];
+			if (count != 0) {
+				double p = (double) (count) / (end - begin);
+				result -= p * Math.log(p);
+			}
 		}
 		return result;
 	}
