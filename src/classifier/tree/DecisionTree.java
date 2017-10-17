@@ -32,7 +32,7 @@ public class DecisionTree {
 
 	// Uses a random subset of the features in each tree to minimize the bias
 	// towards features with a strong correlation to the data.
-	private static final int FEATURES = (int) Math.sqrt(Song.FEATURES);
+	private static final int FEATURES = (int) (2 * Math.sqrt(Song.FEATURES));
 
 	private static class Node {
 		// Internal node parameters.
