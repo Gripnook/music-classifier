@@ -1,0 +1,765 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type"
+          content="text/html;charset=utf-8" />
+
+    <title>
+
+ 
+        
+    </title>
+
+       <!-- tal:pagetitle replace="page_title" condition="python:false">
+            Inserts page title
+        </tal:pagetitle -->
+        
+
+    
+      
+        <base href="http://www.cim.mcgill.ca/" />
+      
+    
+
+    <meta name="generator" content="Plone - http://plone.org" />
+
+
+    <!-- Plone ECMAScripts -->
+    
+      
+        
+            
+                <script type="text/javascript"
+                        src="http://www.cim.mcgill.ca/portal_javascripts/Plone%20Default/ploneScripts1150.js">
+                </script>
+                
+            
+        
+    
+    
+
+    
+	
+          
+        
+            
+                
+                    
+                    
+                        <style type="text/css"><!-- @import url(http://www.cim.mcgill.ca/portal_css/Plone%20Default/ploneStyles0322.css); --></style>
+                    
+                    
+                
+            
+            
+                
+                    <link rel="alternate stylesheet"
+                          type="text/css" media="screen"
+                          href="http://www.cim.mcgill.ca/portal_css/Plone%20Default/ploneStyles3187.css"
+                          title="Small Text" />
+                    
+                    
+                
+            
+            
+                
+                    <link rel="alternate stylesheet"
+                          type="text/css" media="screen"
+                          href="http://www.cim.mcgill.ca/portal_css/Plone%20Default/ploneStyles2787.css"
+                          title="Large Text" />
+                    
+                    
+                
+            
+            
+                
+                    
+                    
+                        <style type="text/css" media="all"><!-- @import url(http://www.cim.mcgill.ca/portal_css/Plone%20Default/ploneStyles1617.css); --></style>
+                    
+                    
+                
+            
+        
+    
+        
+        
+    
+
+    <!-- Internet Explorer CSS Fixes -->
+    <!--[if lt IE 7]>
+        <style type="text/css" media="all">@import url(http://www.cim.mcgill.ca/IEFixes.css);</style>
+    <![endif]-->
+
+    <link rel="shortcut icon" type="image/x-icon"
+          href="http://www.cim.mcgill.ca/favicon.ico" />
+
+    <link rel="home" href="http://www.cim.mcgill.ca"
+          title="Front page" />
+    <link rel="search" title="Search this site"
+          href="http://www.cim.mcgill.ca/search_form" />
+    <!-- link rel="author" title="Author information" tal:attributes="href string:${portal_url}/author/${here/Creator}" />
+    <link rel="contents" href="" title="Site Map" tal:attributes="href string:$portal_url/sitemap" / -->
+
+    
+
+    
+
+    
+
+    
+
+    <!-- Disable IE6 image toolbar -->
+    <meta http-equiv="imagetoolbar" content="no" />
+
+    
+      
+      
+    
+
+    
+
+      
+    
+    
+    
+    
+
+
+      
+      
+    
+
+    
+      
+      
+      <script type="text/javascript" src="pulldownMenus.js"></script>
+      <script type="text/javascript" src="mm_menu.js"></script>
+      <script type="text/javascript" src="validate_forms.js"></script> 
+    
+
+  </head>
+
+  <body dir="ltr">
+    <div id="visual-portal-wrapper">
+
+      <div id="portal-top">
+
+        <div id="portal-header">
+          <a class="hiddenStructure" accesskey="2"
+             href="http://www.cim.mcgill.ca/404#documentContent">Skip to content.</a>
+
+          <a class="hiddenStructure" accesskey="6"
+             href="http://www.cim.mcgill.ca/404#portlet-navigation-tree">Skip to navigation</a>
+
+<!-- original place for site actions -->
+
+             <!-- div metal:use-macro="here/global_searchbox/macros/quick_search">
+               The quicksearch box, normally placed at the top right
+             </div -->
+
+             <div id="portal-logo">
+    <!-- a href="/"
+       tal:attributes="href portal_url"
+
+       tal:content="string:$portal_title"
+       accesskey="1">
+        Plone
+    </a -->
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+       <tr> 
+           <td align="left" width="572">
+
+              <!-- img tal:attributes="src string:$portal_url/${here/logo}" border="0" usemap="#CIMmap"><br -->
+              <img src="images/HDR_CIM.gif" border="0" usemap="#CIMmap"><br>
+              <span style="position:absolute; left: 3.4em; top: 3.5em; font-size: 12pt;  color:#444444;">providing research excellence since 1985</span>
+            </td>  
+       
+            <td style="background-image:url('images/HDR_filler.gif'); background-repeat:repeat-x;">
+             &nbsp;
+            </td>     
+   
+            <td align="right" width="229">
+              <img src="images/HDR_McGill.gif" border="0" usemap="#McGmap">                  
+            </td>
+          </tr>
+      </table>
+
+<map name="CIMmap">
+  <area shape="rect" coords="0,0,470,97" href="/" target="_parent" alt="CIM Home">
+</map>
+
+<map name="McGmap">
+  <area shape="rect" coords="0,0,278,97" href="http://www.mcgill.ca" target="_blank" alt="McGill Home">
+</map>
+
+</div>
+
+             <div id="portal-skinswitcher">
+  
+</div>
+
+             
+          </div>
+<!-- 
+          <div metal:use-macro="here/global_siteactions/macros/site_actions">
+             Site-wide actions (Contact, Sitemap, Help, Style Switcher etc)
+          </div>
+
+          <div metal:use-macro="here/global_personalbar/macros/personal_bar">
+             The personal bar. (log in, logout etc...)
+           </div>
+-->
+          <ul id="portal-personaltools">
+
+
+<!-- span tal:condition="python: not(personal_bar or site_actions)">
+    <li><a href="">&nbsp;</a></li>
+</span -->
+
+</ul>
+
+           <!-- div id="NEW-menu-bar" -->
+           <!-- div metal:use-macro="here/NEW_CIM_menus/macros/NEW_CIM_menus" id="NEW-menu-bar">
+             The SOCS site pull-down menus.
+           </div -->
+
+           
+ 
+
+<h5 class="hiddenStructure">CIM Menus</h5>
+
+<script language="JavaScript1.2">mmLoadMenus();</script>
+
+      
+<table class="menuTable" width="100%" cellspacing="2">
+   <tr>
+<td width="8" valign="center">  
+  <img src="images/rightArrow.gif">
+</td>
+<td class="menuButton" width="75">  
+  <a class="menubar" href="About" onmouseover="MM_swapImage('about','','images/top_navig_hover_02.gif',1);
+                  MM_showMenu(window.mm_menu_0428225326_0,0,25,null,'about')" onmouseout="MM_swapImgRestore();
+                 MM_startTimeout();">
+     <img src="images/top_navig_02.gif" name="about" height="19" border="0" id="about">
+  </a>
+</td>
+
+<td class="menuButton" width="100">  
+  <a class="menubar" href="Academic" onmouseover="MM_swapImage('academic','','images/top_navig_hover_04.gif',1);
+                  MM_showMenu(window.mm_menu_0428225519_0,0,25,null,'academic')" onmouseout="MM_swapImgRestore();
+                 MM_startTimeout();">
+    <img src="images/top_navig_04.gif" name="academic" height="19" border="0" id="academic">
+  </a>
+</td>
+
+<td class="menuButton" width="102">  
+<a class="menubar" href="Research" onmouseover="MM_swapImage('research','','images/top_navig_hover_05.gif',1);
+                MM_showMenu(window.mm_menu_0428225630_0,0,25,null,'research')" onmouseout="MM_swapImgRestore();
+               MM_startTimeout();">
+   <img src="images/top_navig_05.gif" name="research" height="19" border="0" id="research">
+  </a>
+</td>
+
+<td class="menuButton" width="81">  
+  <a class="menubar" href="People" onmouseover="MM_swapImage('people','','images/top_navig_hover_06.gif',1);
+                  MM_showMenu(window.mm_menu_0428225733_0,0,25,null,'people')" onmouseout="MM_swapImgRestore();
+                 MM_startTimeout();">
+   <img src="images/top_navig_06.gif" name="people" height="19" border="0" id="people">
+  </a>
+</td>
+
+<td class="menuButton" width="98">  
+  <a class="menubar" href="Services" onmouseover="MM_swapImage('services','','images/top_navig_hover_07.gif',1);
+                  MM_showMenu(window.mm_menu_0428225932_0,0,25,null,'services')" onmouseout="MM_swapImgRestore();
+                 MM_startTimeout();">
+   <img src="images/top_navig_07.gif" name="services" height="19" border="0" id="services">
+  </a>
+</td>
+
+<td class="menuButton" width="142">  
+  <a class="menubar" href="AnnouncementsEvents" onmouseover="MM_swapImage('announce','','images/top_navig_hover_08.gif',1);
+                  MM_showMenu(window.mm_menu_0428230149_0,0,25,null,'announce')" onmouseout="MM_swapImgRestore();
+     MM_startTimeout();">
+   <img src="images/top_navig_08.gif" name="announce" height="19" border="0" id="announce">
+  </a>
+</td>
+
+<td class="menuButton" width="96">  
+  <a class="menubar" href="socs/login_form" onmouseover="MM_swapImage('internal','','images/top_navig_hover_10.gif',1);
+                  MM_showMenu(window.mm_menu_0428230148_0,0,25,null,'internal')" onmouseout="MM_swapImgRestore();
+                 MM_startTimeout();">
+   <img src="images/top_navig_10.gif" name="internal" height="19" border="0" id="internal">
+</a>
+</td>
+
+<!-- flexible-width table cell -->
+<td>  
+  &nbsp;
+</td>
+<td width="60" align="left">  
+  <a href="site_map">Site&nbsp;Overview</a>
+</td>
+
+
+
+</tr>
+
+</table>
+ 
+
+
+
+           <div id="portal-breadcrumbs">
+
+
+
+<!-- ------------DEBUG
+<br>breadcrumbs         : <span tal:content="breadcrumbs"/><br>
+<br>here/absolute_url   : <span tal:content="here/absolute_url"/><br>
+<br>request/url         : <span tal:content="request/URL"/>
+<br>CONTEXTS['template'].title:<span tal:content="python:CONTEXTS['template'].title"/><br>
+<br>CONTEXTS['template'].id:<span tal:content="python:CONTEXTS['template'].id"/><br>
+ <ul tal:define="filelist python:here.objectValues(['Page Template', 'Controller Page Template'])">
+<span tal:repeat="item filelist" tal:omit-tag="">
+<li tal:condition="python: item.title!='' and item.id!='index_html'">
+... title= <span tal:content="item/title"/>
+... title_or_id= <span tal:content="item/title_or_id"/>
+... id = <span tal:content=" item/id"/>
+... meta_type = <span tal:content=" item/meta_type"/>
+</li>
+</span>
+</ul>
+ -->
+<!-- span tal:content="here/meta_type"/><br -->
+
+<!-- Note: we don't want the breadcrumbs showing up when an event, news item, or seminar is being displayed because
+     that's in the directory of whoever posted the item.  We don't want the full details of the path to that item 
+     being displayed (call it "confidentiality", if you want).
+ -->
+
+   <div>
+    <span class="text" id="breadcrumbs-you-are-here">You are here:</span>
+    <a href="http://www.cim.mcgill.ca">&nbsp;CIM</a>
+    
+  </div>
+   
+
+</div>
+      </div>
+
+      <div class="visualClear"><!-- --></div>
+
+      
+
+      <table id="portal-columns" border="0">
+        <tbody>
+          <tr>
+            
+            
+            
+
+            
+            <td id="portal-column-content">
+
+              
+                <div id="content" class="">
+
+                  
+
+                  <div class="documentContent" id="region-content">
+
+                    <a name="documentContent"></a>
+
+                    
+ 
+                    
+
+                    <div>
+
+        <div>
+
+            <h1>Our apologies...</h1>
+
+            <p>
+            The item you requested does not exist on this server or cannot be served.
+            </p>
+
+            <p>
+            Please double check the web address or use the search function on this page to find what you are looking for.
+            </p>
+
+            <p>
+            If you know you have the correct web address but are encountering an error, please
+            contact the <a href="http://www.cim.mcgill.ca/contact-info">Site Administration</a>.
+            </p>
+
+            <p>
+            Thank you.
+            </p>
+
+            <code>
+            404 Not Found
+            </code>
+
+        </div>
+
+        
+</div>
+
+                    
+                      <div class="discussion">
+    
+</div>
+                    
+
+                  </div>
+
+                </div>
+
+              
+            </td>
+            
+
+            
+            <td id="portal-column-two">
+              <div class="visualPadding">
+                
+                  
+
+    
+        
+
+        
+            
+        
+
+        
+
+        
+    
+    
+        
+
+        
+            <div>
+
+    <dl class="portlet" id="portlet-news">
+
+        <dt class="portletHeader">
+            <a> CIM News</a>
+        </dt>
+
+        
+        <dd class="portletItem odd">
+
+            <a href="http://www.cim.mcgill.ca/Members/jan/announcement-software-architect-position-for-social-media-analysis"
+               title="Position in Shared Reality Lab to develop the infrastructure for an open-source social media analysis engine. ">
+                <img src="http://www.cim.mcgill.ca/newsitem_icon.gif" alt="" title="News" height="16" width="16" />
+                Announcement of Software Architect Position for Social Media Analysis
+                <span class="portletItemDetails">2017-08-17</span>
+            </a>
+        </dd>
+        
+        
+        <dd class="portletItem even">
+
+            <a href="http://www.cim.mcgill.ca/Members/rogers/announcement-of-postdoctoral-fellow-position-in-medical-image-analysis"
+               title="Probabilistic Vision Group and Medical Imaging Lab, Center for Intelligent Machines &amp; Department of Electrical and Computer Engineering,
+AND
+Reasoning and Learning Lab, School of Computer Science
+McGill University">
+                <img src="http://www.cim.mcgill.ca/newsitem_icon.gif" alt="" title="News" height="16" width="16" />
+                Announcement of Postdoctoral Fellow Position in Medical Image Analysis
+                <span class="portletItemDetails">2017-05-04</span>
+            </a>
+        </dd>
+        
+        
+        <dd class="portletItem odd">
+
+            <a href="http://www.cim.mcgill.ca/Members/rogers/professor-joelle-pineau-advancing-research-in-mobility-devices"
+               title="Smart wheelchair created in Reasoning and Learning Lab gives users more autonomy">
+                <img src="http://www.cim.mcgill.ca/newsitem_icon.gif" alt="" title="News" height="16" width="16" />
+                Professor Joelle Pineau advancing research in mobility devices
+                <span class="portletItemDetails">2017-04-20</span>
+            </a>
+        </dd>
+        
+
+        <dd class="portletFooter">
+
+            <a href="http://www.cim.mcgill.ca/cim_news">
+              More CIM news&hellip;
+            </a>
+
+            
+        </dd>
+    </dl>
+
+</div>
+        
+
+        
+
+        
+    
+    
+        
+
+        
+            <div>
+
+    <dl class="portlet" id="portlet-awards">
+
+        <dt class="portletHeader">
+            <a> CIM Honours and Awards</a>
+        </dt>
+
+        
+        <dd class="portletItem odd">
+
+            <a href="http://www.cim.mcgill.ca/Members/rogers/professor-paul-kry-wins-best-paper-award-for-artistic-robot"
+               title="Awarded at Expressive 2016 in Lisbon, Portugal along with students Brendan Galea, Ehsan Kia and Nicholas Aird">
+                <img src="http://www.cim.mcgill.ca/newsitem_icon.gif" alt="" title="News" height="16" width="16" />
+                Professor Paul Kry wins best paper award for artistic robot 
+                <span class="portletItemDetails">2016-07-18</span>
+            </a>
+        </dd>
+        
+        
+        <dd class="portletItem even">
+
+            <a href="http://www.cim.mcgill.ca/Members/rogers/congratulations-to-emmanuel-piuze-on-his-cipprs-doctoral-dissertation-award-2015-honourable-mention"
+               title="">
+                <img src="http://www.cim.mcgill.ca/newsitem_icon.gif" alt="" title="News" height="16" width="16" />
+                Congratulations to Emmanuel Piuze on his CIPPRS Doctoral Dissertation Award 2015 Honourable Mention
+                <span class="portletItemDetails">2016-02-29</span>
+            </a>
+        </dd>
+        
+        
+        <dd class="portletItem odd">
+
+            <a href="http://www.cim.mcgill.ca/Members/rogers/colin-gallacher-wins-best-poster-in-information-communications-technology-at-mcgill-engineering-reseach-showcase-1"
+               title="">
+                <img src="http://www.cim.mcgill.ca/newsitem_icon.gif" alt="" title="News" height="16" width="16" />
+                Colin Gallacher Wins Best Poster in Information &amp; Communications Technology at McGill Engineering Reseach Showcase
+                <span class="portletItemDetails">2015-10-22</span>
+            </a>
+        </dd>
+        
+        
+        <dd class="portletItem even">
+
+            <a href="http://www.cim.mcgill.ca/Members/rogers/congratulations-aditya-mahajan-winner-of-the-ieee-control-systems-society-s-george-s-axelby-outstanding-paper-award"
+               title="">
+                <img src="http://www.cim.mcgill.ca/newsitem_icon.gif" alt="" title="News" height="16" width="16" />
+                Congratulations Prof. Aditya Mahajan, winner of the IEEE Control Systems Society's George S. Axelby Outstanding Paper Award!
+                <span class="portletItemDetails">2015-09-01</span>
+            </a>
+        </dd>
+        
+
+        <dd class="portletFooter">
+
+            
+
+            <a href="http://www.cim.mcgill.ca/honours_and_awards">
+              More CIM Honours and Awards&hellip;
+            </a>
+        </dd>
+    </dl>
+
+</div>
+        
+
+        
+
+        
+    
+    
+        
+
+        
+            <div>
+
+<dl class="portlet" id="portlet-EandS">
+
+  
+    <dt class="portletHeader">
+        <a>
+            Upcoming Events & Seminars
+        </a>
+    </dt>
+
+    
+    <dd class="portletItem odd">
+        <a href="http://www.cim.mcgill.ca/Members/rogers/seminar.2017-10-16.9193376052"
+           title="">
+            <img src="http://www.cim.mcgill.ca/event_icon.gif" alt="" title="Event" height="16" width="16" />
+            <span>Seminar:&nbsp;</span>
+            Interactive Fabrication and Fabrication of Interactive Objects
+            <span class="portletItemDetails">
+                
+                2017-10-20
+            </span>
+        </a>
+    </dd>
+    
+    
+    <dd class="portletItem even">
+        <a href="http://www.cim.mcgill.ca/Members/rogers/seminar.2017-10-03.0552917905"
+           title="">
+            <img src="http://www.cim.mcgill.ca/event_icon.gif" alt="" title="Event" height="16" width="16" />
+            <span>Seminar:&nbsp;</span>
+            How does a small brain decide on an action?
+            <span class="portletItemDetails">
+                
+                2017-10-25
+            </span>
+        </a>
+    </dd>
+    
+    
+    <dd class="portletItem odd">
+        <a href="http://www.cim.mcgill.ca/Members/rogers/seminar.2017-10-03.7409213695"
+           title="">
+            <img src="http://www.cim.mcgill.ca/event_icon.gif" alt="" title="Event" height="16" width="16" />
+            <span>Seminar:&nbsp;</span>
+            Interactive systems based on electrical muscle stimulation
+            <span class="portletItemDetails">
+                
+                2017-10-27
+            </span>
+        </a>
+    </dd>
+    
+
+       <dd class="portletFooter">
+          <table border="0" cellspacing="0" cellpadding="0" width="100%">
+             <tr>
+                <td align="left">
+                   <a href="http://www.cim.mcgill.ca/cim_events">
+                      <span>
+                        All events&hellip;
+                      </span>
+                   </a>
+                </td>
+                <td align="right">
+                   <a href="http://www.cim.mcgill.ca/cim-seminars">
+                      All seminars&hellip;
+                   </a>
+                </td>
+              </tr>
+            </table>
+          </dd>
+</dl>
+
+
+</div>
+        
+
+        
+
+        
+    
+    
+        
+
+        
+            <div>
+
+      <dl class="portlet" id="portlet-random-image">
+
+
+          <dd class="portletItem">
+<center>
+             
+
+                <a alt=""
+                   href="http://www.cim.mcgill.ca/~pvg/"
+                   target="_blank"><img
+    src="http://www.cim.mcgill.ca/Portlets/random_portlet_images/copy_of_pvggrouppicture2005_scaled.JPG"
+    height="233" width="288"></a>
+                
+                <div>
+
+                <table width="288">
+                  <tr><td><center>
+                   <a href="http://www.cim.mcgill.ca/~pvg/"
+                      target="_blank">
+                      <span>Probabilistic Vision Group, 2008</span>
+                   </a>
+                   </center>
+                  </td></tr>
+                 </table>
+            
+            </div>
+
+
+            
+</center>
+          </dd>
+
+  </dl>
+ </div>
+        
+
+        
+
+        
+    
+
+                
+                &nbsp;
+              </div>
+            </td>
+            
+          </tr>
+        </tbody>
+      </table>
+      
+
+      <div class="visualClear"><!-- --></div>
+
+
+      <hr class="netscape4" />
+
+      
+
+        <div id="portal-footer">
+
+
+
+Copyright &copy; <span>2017</span>
+McGill University - Centre for Intelligent Machines - 
+<a href="credits">Credits</a> 
+<a href="http://www.independentrobotics.com"></a>
+
+<br>
+
+
+
+</div>
+        <!-- div id="portal-footer-finisher">
+         &nbsp;&nbsp;
+        </div -->
+ 
+
+        <!-- metal:colophon use-macro="here/colophon/macros/colophon">
+          The colophon area - contains details about the production of
+          the site. Typically "powered by" buttons, standards, tools used.
+        </metal:colophon -->
+      
+
+    </div>
+
+</body>
+</html>
+

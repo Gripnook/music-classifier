@@ -1,0 +1,328 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+
+<title>Assignment #2</title>
+<!--  ------------------------------------------------------------ -->
+
+        <link rel="stylesheet" type="text/css" href="Assignment%20%232_files/style01.css">
+
+<style>
+td {
+    border: 1px solid grey;
+}
+
+th {
+    border: 1px solid grey;
+    background-color: #fbf9e9;
+    font-weight: bold;
+    font-size: 11pt;
+    text-align: center
+}
+</style>
+
+<!--  ------------------------------------------------------------ -->
+</head><body bgcolor="#ffffff">
+
+<h1> Assignment #2: Music Genre Classification </h1>
+<h3> Due: Final submission by October <font color="red">19</font>, 12:05AM</h3>
+
+<p>
+This assignment is to be done <b>individually</b>.
+
+</p><p>
+<img src="Assignment%20%232_files/h_line.gif">
+
+
+</p><h2>Academic Integrity</h2>
+
+<p>
+<i>
+The following is offered with apologies to the vast majority of
+students who do their work honestly and take their university learning
+seriously:
+</i>
+
+</p><p>
+Your instructor takes academic integrity seriously and has no
+tolerance for plagiarism or any other form of academic misconduct.
+Failure to respect these guidelines will result in you receiving a
+grade of <b>zero</b> on this assignment.
+
+</p><p>
+Acceptable collaboration between students, provided it is acknowledged explicitly in your report and code, might include:
+
+</p><ol>
+<li> discussing some aspect of the assignment specifications in attempting to understand a particular point
+</li><li> discussing broadly the additional machine learning approaches you experimented with
+</li><li> discussin a problem you encountered while programming your version of the learning algorithm
+</li></ol>
+
+Sharing of any computer code between students, or re-using any code from a third party (e.g., open source) is acceptable, <b>provided that you indicate this explicitly at the start of your report and (as comments) in the source code</b>.  In this case, only the portion of work that you did <b>individually</b> will be considered toward your grade.
+
+<p>
+<b>Unacceptable collaboration</b> and violations of academic integrity include, but are not limited to:
+
+</p><ol>
+<li> including any code that was not your own and failing to indicate so
+</li><li> copying part of another student's report
+</li></ol>
+
+If you are uncertain about any of these guidelines, please discuss with your instructor as soon as possible.
+
+<p>
+  <img src="Assignment%20%232_files/h_line.html">
+</p>
+
+<h2>Introduction</h2>
+
+<p>
+  Modern classification techniques can be used to distinguish and 
+categorize many things which some people may consider uniquely human. In
+ this assignment you will use two basic classification algorithms to 
+divide songs in ten music genres: classical, country, edm_dance, jazz, 
+kids, latin, metal, pop, rnb, and rock.
+</p>
+
+<h2> Preparation</h2>
+
+<p>
+  This assignment is organized as a kaggle competition. To participate 
+you will need to create a kaggle account using your McGill email. Once 
+you have your account, go to the link posted on moodle to join the 
+competition.
+</p>
+
+<p>
+  Before doing any classification, you will need to download the data 
+found in the 'Data' menu of the kaggle competition. There you can 
+download a zip file containing a CSV file and two subdirectories, 
+containing training and testing data. The data are a set of files, each 
+corresponding to a single song. The CSV file, <tt>labels.csv</tt> contains the labels for the songs in the training directory.
+</p>
+
+<p>
+  Every line in the song files consists of 12 decimal numbers, 
+corresponding to the frequency analysis of a small segment of the song. 
+There are between approximately 300 and 1300 segments per song, 
+depending on the length, beat, and timbre of the music.
+</p>
+
+<p>
+  Each line can be thought of as a 12-dimentional feature vector with genre label of that song.
+</p>
+
+<p>
+  Your first task is to download these files, and load them into your 
+program so that they may be manipulated. The files are in CSV format, so
+ you may benefit from the use of a dataframe library (e.g., pandas in 
+python). Additionally, you should split your data into separate training
+ and testing sets.
+</p>
+
+<p>
+  You may wish to start by using a small subset of the training data for
+ testing purposes, making sure that you don't also train on these 
+examples.  This will allow you to gain confidence in the performance of 
+your classifier before you try it with a greater portion of testing 
+data, and eventually, validating it on the competition test set.
+</p>
+
+<h2>Gaussian classifier</h2>
+
+<p>
+  The first type of classifier you will build is a Gaussian classifier.
+</p>
+
+<h3>Training</h3>
+
+<p>
+  For each genre, calculate the 12-dimensional mean vector and 12x12-dimensional <a href="https://en.wikipedia.org/wiki/Covariance_matrix">covariance matrix</a>
+ from your training set. These 12+144 numbers fully describe the 
+probabilistic model of the genre. You should have one mean vector and 
+one covariance matrix for each of the six genres.
+</p>
+
+<h3>Testing</h3>
+
+<p>
+  With the model trained you will now want to evaluate it on the testing
+ set. This model allows you to make predictions both on the feature 
+vectors and on songs as a whole. To make a prediction on a new feature 
+vector <img src="Assignment%20%232_files/x.png"> simply plug it into the following equation, giving the unnormalized negative log likelihood (UNLL) for each genre:
+</p>
+
+<img src="Assignment%20%232_files/UNLL_eq.png" hspace="20">
+
+<p>
+  where <img src="Assignment%20%232_files/mu.png"> is the mean vector of that genre, and <img src="Assignment%20%232_files/sigma.png"> is its covariance matrix.
+</p>
+
+<p>
+  The UNLL is an indicator of the probability of a feature vector 
+belonging to a song of a specific genre. The lower the UNLL, the higher 
+the probability. Therefore, the genre with the lowest value of UNLL is 
+the highest probability prediction for the corresponding feature vector.
+</p>
+
+<p>
+  Extending this idea, it is possible to predict a genre for an entire 
+song. To accomplish this, repeat the previous step on all the feature 
+vectors of that song and average the results for each genre. The genre 
+with the lowest average UNLL is the prediction.
+</p>
+
+
+<h2><i>k</i>-Nearest Neighbor classifier</h2>
+
+You will now build a <i>k</i>-Nearest Neighbor classifier.
+
+<h3>Training</h3>
+
+<p>
+  One of the main advantages of this type of classifier is that no 
+training is required. All the classifying information is found in the 
+unformatted data.
+</p>
+
+<h3>Testing</h3>
+
+<p>
+  Given a new song, calculate the Euclidean distance between each feature vector <img src="Assignment%20%232_files/v.png"> with all the feature vectors in your training set. Then find the <i>k</i> vectors with the smallest distance from <img src="Assignment%20%232_files/v.png">. Assign each vector <img src="Assignment%20%232_files/v.png"> the genre of the majority of these <i>k</i> vectors. Finally, to assign a genre to the song, find the majority class of its feature vectors.
+</p>
+
+<h2>Additional Improvements</h2>
+
+<p>
+Try to improve your score on Kaggle.
+You are free to use any method, classifier or third-party library you want.
+Discuss your method and how it compares to the previous two classifiers.
+</p>
+
+<h2>Note on the use of packages</h2>
+
+<p>
+  You are expected to write the algorithms for the Gaussian and <i>k</i>-NN
+ classifiers. You are allowed to use a linear algebra package, e.g., 
+numpy, as you see fit, as long as you write the core of the prediction 
+algorithm.
+</p>
+
+
+<h2>Report</h2>
+
+<p>
+Your report should address the following questions:
+</p>
+
+<ol>
+  <li>
+    What assumptions about the data do we make when we model the date using a Gaussian distribition?
+  </li>
+
+  <li>
+    When do you expect that a Gaussian will work well and when do you think it will not work well?
+  </li>
+
+  <li>
+    What values of <i>k</i> work best for the kNN classifier?
+  </li>
+
+  <li>
+    Based on your results from this assignment, which classifier 
+(Gaussian or kNN) works best for the task of Music Genre Classification?
+  Why?
+  </li>
+
+</ol>
+
+<h2> Submitting your assignment</h2>
+
+<p>Your assignment must be submitted through <a href="http://moodle.cim.mcgill.ca/">moodle</a> to allow for peer- and self-assessment.  The submission must contain:
+</p>
+
+<ul>
+  <li> a softcopy of your report</li>
+
+  <li>
+    all of the source code ready to be compiled or interpreted on the
+    Trottier Engineering Linux machines
+  </li>
+
+  <li>
+    a Makefile as relevant
+  </li>
+</ul>
+
+
+<p></p><h2> Marking scheme </h2>
+
+<p>(Subject to minor revision)</p>
+
+	  <table cellspacing="0" cellpadding="3">
+
+	    <tbody><tr align="left">
+	      <th>Question/Criterion</th><th>Unsatisfactory</th><th>Bare minimum</th><th>Satisfactory</th><th>Above and beyond</th>
+	    </tr>
+
+	    <tr>
+	      <td>1. What assumptions about the data do we make when we model the data using a Gaussian distribution?</td>
+	      <td>0, No discussion</td>
+	      <td>1. One assumption is stated.</td>
+	      <td>3. Several key assumptions are stated.</td>
+	    </tr>
+
+	    <tr>
+	      <td>2. When do you expect that a Gaussian will work well and when do you think it will not work well?</td>
+	      <td>0. No discussion</td>
+	      <td>1. Only one situation is given, where one classifier is better than the other.</td>
+	      <td>3. Several situations are given, without elaborating on what makes one classifier better than the other.</td>
+	      <td>5. All previous criteria. With elaborate discussion of the factors that make one classifier better than the other.</td>
+	    </tr>
+
+	    <tr>
+	      <td>3. What values of <i>k</i> work best for the kNN classifier?</td>
+	      <td>0. No discussion</td>
+	      <td>1. A value of <i>k</i> is stated without supporting graph.</td>
+	      <td>3. A value of <i>k</i>is stated, with a graph showing the results of different experiments.</td>
+	    </tr>
+
+	    <tr>
+	      <td>4. Based on your results from this assignment, which 
+classifier (Gaussian, kNN, or other) works best for the task of music 
+genre classification<!--?  Discuss why./td-->
+	      </td><td>0. No discussion</td>
+	      <td>1. A classifier is stated as best, without supporting evidence.</td>
+	      <td>3. A classifier is stated as best, with supporting evidence, but without discussing why.</td>
+	      <td>5. A classifier is stated as best, with elaboration on why, and with supporting evidence.</td>
+	    </tr>
+
+	    <tr>
+	      <td>5. Code and documentation.</td>
+	      <td>0: Code does not run.</td>
+	      <td>1: Code runs without documentation or feedback.</td>
+	      <td>3: Code runs, is well documented, and gives meaningful feedback.</td>
+	    </tr>
+
+	    <tr>
+	      <td>6. Kaggle performance.</td>
+	      <td>0: No submissions were made to kaggle.</td>
+	      <td>1: Bottom third of submissions.</td>
+	      <td>2: Top two-thirds of submissions.</td>
+	      <td>3: Top submissions.</td>
+	    </tr>
+
+	  </tbody></table>
+
+
+<p></p><p>
+<img src="Assignment%20%232_files/h_line.gif">
+</p>
+
+<p>
+  <i>
+    Original specifications by <a href="http://modelai.gettysburg.edu/2012/music/">Douglas Turnbull </a><br>
+    Last updated on 15 October 2017
+  </i>
+</p>
+
+</body></html>
