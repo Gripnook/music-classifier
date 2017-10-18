@@ -106,7 +106,7 @@ public class DecisionTree {
 	}
 
 	private boolean isLeaf(int begin, int end, int depth) {
-		return begin + 1 == end || uniformGenre(begin, end);
+		return begin + Song.FEATURES >= end || uniformGenre(begin, end);
 	}
 
 	private boolean uniformGenre(int begin, int end) {
