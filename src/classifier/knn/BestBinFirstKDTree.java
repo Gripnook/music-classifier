@@ -84,6 +84,11 @@ public class BestBinFirstKDTree {
 				break;
 			}
 			Node node = queue.pollFirst();
+			if (!crosses(node.dist, feature)) {
+				// If all current nearest neighbours are closer than the nearest
+				// median axis, we can stop the search.
+				break;
+			}
 			nearest(node.begin, node.end, feature, node.depth);
 		}
 		return currentNearest;
@@ -134,6 +139,15 @@ public class BestBinFirstKDTree {
 	private boolean crosses(Entry median, double[] feature, int axis) {
 		for (Entry entry : currentNearest) {
 			if (entry == null || distance(feature, median.feature, axis) < distance(feature, entry.feature)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean crosses(double dist, double[] feature) {
+		for (Entry entry : currentNearest) {
+			if (entry == null || dist < distance(feature, entry.feature)) {
 				return true;
 			}
 		}
