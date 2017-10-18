@@ -24,7 +24,7 @@ import numeric.Stats;
 public class WeighedKNNClassifier implements SongClassifier {
 	private int k;
 	private List<Entry> songs = new ArrayList<>();
-	private KDTree tree = null;
+	private BestBinFirstKDTree tree = null;
 
 	public WeighedKNNClassifier(int k) {
 		this.k = k;
@@ -40,7 +40,7 @@ public class WeighedKNNClassifier implements SongClassifier {
 	@Override
 	public void train() {
 		// Uses a KD tree to speed up classification.
-		tree = new KDTree(songs, Song.FEATURES);
+		tree = new BestBinFirstKDTree(songs, Song.FEATURES);
 		List<double[]> data = new ArrayList<>();
 		for (Entry song : songs) {
 			data.add(song.feature);
@@ -70,7 +70,7 @@ public class WeighedKNNClassifier implements SongClassifier {
 	private double[] classify(double[] feature) {
 		// Computes a probability vector over all genres by adding the weights
 		// of the k nearest neighbours and normalizing.
-		Entry[] nearest = tree.nearest(k, feature);
+		Entry[] nearest = tree.nearest(k, feature, 100 * k);
 		double[] probabilities = new double[GENRES.length];
 		for (Entry entry : nearest) {
 			double dist = distance(entry.feature, feature);

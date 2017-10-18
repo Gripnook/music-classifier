@@ -20,7 +20,7 @@ import numeric.Plurality;
 public class KNNClassifier implements SongClassifier {
 	private int k;
 	private List<Entry> songs = new ArrayList<>();
-	private KDTree tree = null;
+	private BestBinFirstKDTree tree = null;
 
 	public KNNClassifier(int k) {
 		this.k = k;
@@ -36,7 +36,7 @@ public class KNNClassifier implements SongClassifier {
 	@Override
 	public void train() {
 		// Uses a KD tree to speed up classification.
-		tree = new KDTree(songs, Song.FEATURES);
+		tree = new BestBinFirstKDTree(songs, Song.FEATURES);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class KNNClassifier implements SongClassifier {
 	}
 
 	private Genre classify(double[] feature) {
-		Entry[] nearest = tree.nearest(k, feature);
+		Entry[] nearest = tree.nearest(k, feature, 100 * k);
 		Plurality<Genre> plurality = new Plurality<>();
 		for (Entry entry : nearest) {
 			plurality.add(entry.genre);
